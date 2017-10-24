@@ -6,9 +6,12 @@ using System.Threading.Tasks;
 
 namespace SimpleMLP.MLP
 {
-    public class Layer
+    public abstract class Layer
     {
-        public int LayerIndex { get; set; }
-        public List<HiddenNeuron> Neurons { get; set; }
+        public List<Neuron> Neurons { get; set; }
+        public Layer()
+        {
+            Neurons = new List<Neuron>();
+        }
     }
 }

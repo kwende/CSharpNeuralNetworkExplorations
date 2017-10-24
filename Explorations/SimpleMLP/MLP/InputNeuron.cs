@@ -6,8 +6,7 @@ using System.Threading.Tasks;
 
 namespace SimpleMLP.MLP
 {
-    public class InputNeuron
+    public class InputNeuron : Neuron
     {
-        public double Value { get; set; }
     }
 }

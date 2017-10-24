@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SimpleMLP.MLP;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,7 +14,9 @@ namespace SimpleMLP
             // What I cannot create, I do not understand. 
             // ~Richard P. Feynman
 
+            Network network = Network.BuildNetwork(5, 6, 5, 15);
 
+            return; 
         }
     }
 }

@@ -42,10 +42,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MLP\InputLayer.cs" />
     <Compile Include="MLP\InputNeuron.cs" />
+    <Compile Include="MLP\HiddenLayer.cs" />
     <Compile Include="MLP\Layer.cs" />
     <Compile Include="MLP\Network.cs" />
-    <Compile Include="MLP\HiddenNeuron.cs" />
+    <Compile Include="MLP\Neuron.cs" />
+    <Compile Include="MLP\WeightedNeuron.cs" />
+    <Compile Include="MLP\OutputLayer.cs" />
     <Compile Include="MLP\Weight.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

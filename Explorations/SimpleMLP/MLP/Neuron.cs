@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace SimpleMLP.MLP
 {
-    public class HiddenNeuron
+    public class Neuron
     {
-        public double Bias { get; private set; }
-        public List<Weight> Weights { get; private set; }
+        public double Value { get; private set; }
     }
 }
