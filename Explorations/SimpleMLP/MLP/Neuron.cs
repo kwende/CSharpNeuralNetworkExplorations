@@ -8,6 +8,6 @@ namespace SimpleMLP.MLP
 {
     public class Neuron
     {
-        public double Value { get; private set; }
+        public double Value { get; set; }
     }
 }

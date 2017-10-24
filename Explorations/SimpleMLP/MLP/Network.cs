@@ -38,5 +38,19 @@ namespace SimpleMLP.MLP
 
             return network;
         }
+
+        public void SetInputs(double[] inputs)
+        {
+            if (inputs.Length != InputLayer.Neurons.Count)
+            {
+                throw new ArgumentOutOfRangeException("inputs",
+                    "Number of inputs supplied doesn't match the size of the input layer.");
+            }
+
+            for (int c = 0; c < inputs.Length; c++)
+            {
+                ((InputNeuron)InputLayer.Neurons[c]).Value = inputs[c];
+            }
+        }
     }
 }

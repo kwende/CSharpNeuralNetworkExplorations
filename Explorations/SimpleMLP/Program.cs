@@ -16,7 +16,15 @@ namespace SimpleMLP
 
             Network network = Network.BuildNetwork(5, 6, 5, 15);
 
-            return; 
+            for (int c = 0; c < 5; c++)
+            {
+                double[] inputs = new double[5];
+                inputs[c] = 1;
+
+                network.SetInputs(inputs);
+            }
+
+            return;
         }
     }
 }
