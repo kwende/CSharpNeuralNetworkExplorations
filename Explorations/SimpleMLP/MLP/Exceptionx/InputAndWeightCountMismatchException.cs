@@ -4,10 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SimpleMLP.MLP
+namespace SimpleMLP.MLP.Exceptionx
 {
-    public class Neuron
+    public class InputAndWeightCountMismatchException : Exception
     {
-        public double Output { get; set; }
     }
 }

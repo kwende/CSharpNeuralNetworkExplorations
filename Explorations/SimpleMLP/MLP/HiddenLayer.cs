@@ -11,13 +11,13 @@ namespace SimpleMLP.MLP
         private HiddenLayer() : base()
         {
         }
-        public static HiddenLayer BuildHiddenLayer(Layer previousLayer, int numberOfNeurons)
+        public static HiddenLayer BuildHiddenLayer(Random rand, Layer previousLayer, int numberOfNeurons)
         {
             HiddenLayer toReturn = new HiddenLayer();
 
             for (int c = 0; c < numberOfNeurons; c++)
             {
-                toReturn.Neurons.Add(WeightedNeuron.BuildNeuron(previousLayer));
+                toReturn.Neurons.Add(WeightedNeuron.BuildNeuron(rand, previousLayer));
             }
 
             return toReturn;

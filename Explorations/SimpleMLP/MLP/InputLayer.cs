@@ -11,9 +11,8 @@ namespace SimpleMLP.MLP
         private InputLayer() : base()
         {
         }
-        public static InputLayer BuildInputLayer(int number)
+        public static InputLayer BuildInputLayer(Random rand, int number)
         {
-            Random rand = new Random();
             InputLayer toReturn = new InputLayer();
             for (int c = 0; c < number; c++)
             {

@@ -14,15 +14,12 @@ namespace SimpleMLP
             // What I cannot create, I do not understand. 
             // ~Richard P. Feynman
 
-            Network network = Network.BuildNetwork(5, 6, 5, 15);
+            Network network = Network.BuildNetwork(5, 5, 5, 15);
 
-            for (int c = 0; c < 5; c++)
-            {
-                double[] inputs = new double[5];
-                inputs[c] = 1;
+            double[] x = { 0, 1, 2, 3, 4 };
+            double[] y = { 1, 2, 3, 4, 5 };
 
-                network.SetInputs(inputs);
-            }
+            network.Train(x, y); 
 
             return;
         }

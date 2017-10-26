@@ -42,6 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MLP\Exceptionx\InputAndWeightCountMismatchException.cs" />
     <Compile Include="MLP\InputLayer.cs" />
     <Compile Include="MLP\InputNeuron.cs" />
     <Compile Include="MLP\HiddenLayer.cs" />

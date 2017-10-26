@@ -23,34 +23,72 @@ namespace SimpleMLP.MLP
 
             Network network = new Network();
 
-            network.InputLayer = InputLayer.BuildInputLayer(inputNeuronCount);
+            network.InputLayer = InputLayer.BuildInputLayer(rand, inputNeuronCount);
 
             Layer previousLayer = network.InputLayer;
             for (int c = 0; c < hiddenLayerCounts.Length; c++)
             {
                 int currentLayerCount = hiddenLayerCounts[c];
-                HiddenLayer hiddenLayer = HiddenLayer.BuildHiddenLayer(previousLayer, currentLayerCount);
+                HiddenLayer hiddenLayer = HiddenLayer.BuildHiddenLayer(rand, previousLayer, currentLayerCount);
                 network.HiddenLayers.Add(hiddenLayer);
                 previousLayer = hiddenLayer;
             }
 
-            network.OutputLayer = OutputLayer.BuildOutputLayer((HiddenLayer)previousLayer, outputNeuronCount);
+            network.OutputLayer = OutputLayer.BuildOutputLayer(rand, (HiddenLayer)previousLayer, outputNeuronCount);
 
             return network;
         }
 
-        public void SetInputs(double[] inputs)
+        public void Train(double[] x, double[] y)
         {
-            if (inputs.Length != InputLayer.Neurons.Count)
+            if (x.Length != InputLayer.Neurons.Count)
             {
                 throw new ArgumentOutOfRangeException("inputs",
                     "Number of inputs supplied doesn't match the size of the input layer.");
             }
 
-            for (int c = 0; c < inputs.Length; c++)
+            for (int c = 0; c < x.Length; c++)
             {
-                ((InputNeuron)InputLayer.Neurons[c]).Value = inputs[c];
+                ((InputNeuron)InputLayer.Neurons[c]).Output = x[c];
             }
+
+            double[] output = Feedforward();
+        }
+
+        private double[] Feedforward()
+        {
+            Layer previousLayer = (Layer)InputLayer;
+
+            foreach (HiddenLayer hiddenLayer in HiddenLayers)
+            {
+                foreach (WeightedNeuron currentLayerNeuron in hiddenLayer.Neurons)
+                {
+                    currentLayerNeuron.Inputs.Clear();
+
+                    foreach (Neuron previousLayerNeuron in previousLayer.Neurons)
+                    {
+                        currentLayerNeuron.Inputs.Add(previousLayerNeuron.Output);
+                    }
+
+                    currentLayerNeuron.ComputeOutput();
+                }
+
+                previousLayer = hiddenLayer;
+            }
+
+            foreach (WeightedNeuron currentLayerNeuron in OutputLayer.Neurons)
+            {
+                currentLayerNeuron.Inputs.Clear();
+
+                foreach (Neuron previousLayerNeuron in previousLayer.Neurons)
+                {
+                    currentLayerNeuron.Inputs.Add(previousLayerNeuron.Output);
+                }
+
+                currentLayerNeuron.ComputeOutput();
+            }
+
+            return OutputLayer.Neurons.Select(n => n.Output).ToArray();
         }
     }
 }
