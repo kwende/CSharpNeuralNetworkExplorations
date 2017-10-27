@@ -61,9 +61,11 @@ namespace SimpleMLP.MLP
                     double output = outputs[d];
                     double expectedOutput = y[t, d];
 
-                    error += Math.CostFunction.ComputeDerivative(output, expectedOutput) *
-                        Math.Sigmoid.ComputeDerivative(output);
+                    error += Math.CostFunction.ComputeDerivative(output, expectedOutput); 
                 }
+
+                error /= (outputs.Length * 1.0);
+                error *= Math.Sigmoid.ComputeDerivative()
             }
         }
 
