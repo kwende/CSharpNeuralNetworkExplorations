@@ -19,7 +19,7 @@ namespace SimpleMLP.MLP
 
         public static Network BuildNetwork(int inputNeuronCount, int outputNeuronCount, params int[] hiddenLayerCounts)
         {
-            Random rand = new Random();
+            Math.RandomNormal rand = new Math.RandomNormal(0, 1);
 
             Network network = new Network();
 
@@ -39,20 +39,24 @@ namespace SimpleMLP.MLP
             return network;
         }
 
-        public void Train(double[] x, double[] y)
+        public void Train(double[,] x, double[,] y)
         {
-            if (x.Length != InputLayer.Neurons.Count)
+            if (x.GetLength(1) != InputLayer.Neurons.Count)
             {
                 throw new ArgumentOutOfRangeException("inputs",
                     "Number of inputs supplied doesn't match the size of the input layer.");
             }
 
-            for (int c = 0; c < x.Length; c++)
+            for (int c = 0; c < x.GetLength(0); c++)
             {
-                ((InputNeuron)InputLayer.Neurons[c]).Output = x[c];
-            }
+                for (int d = 0; d < x.GetLength(1); d++)
+                {
+                    ((InputNeuron)InputLayer.Neurons[d]).Output = x[c, d];
+                }
 
-            double[] output = Feedforward();
+                double[] output = Feedforward();
+
+            }
         }
 
         private double[] Feedforward()

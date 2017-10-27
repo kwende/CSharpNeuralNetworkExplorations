@@ -11,7 +11,7 @@ namespace SimpleMLP.MLP
         private HiddenLayer() : base()
         {
         }
-        public static HiddenLayer BuildHiddenLayer(Random rand, Layer previousLayer, int numberOfNeurons)
+        public static HiddenLayer BuildHiddenLayer(Math.RandomNormal rand, Layer previousLayer, int numberOfNeurons)
         {
             HiddenLayer toReturn = new HiddenLayer();
 

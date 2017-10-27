@@ -11,7 +11,7 @@ namespace SimpleMLP.MLP
         private OutputLayer() : base()
         {
         }
-        public static OutputLayer BuildOutputLayer(Random rand, HiddenLayer previousLayer, int numberOfNeurons)
+        public static OutputLayer BuildOutputLayer(Math.RandomNormal rand, HiddenLayer previousLayer, int numberOfNeurons)
         {
             OutputLayer toReturn = new OutputLayer();
             for (int c = 0; c < numberOfNeurons; c++)

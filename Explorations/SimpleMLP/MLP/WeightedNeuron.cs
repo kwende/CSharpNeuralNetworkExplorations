@@ -34,19 +34,19 @@ namespace SimpleMLP.MLP
 
             k += Bias;
 
-            Output = k;
+            Output = Math.Sigmoid.Compute(k);
         }
 
-        public static WeightedNeuron BuildNeuron(Random rand, Layer previousLayer)
+        public static WeightedNeuron BuildNeuron(Math.RandomNormal rand, Layer previousLayer)
         {
             WeightedNeuron toReturn = new WeightedNeuron();
 
-            toReturn.Bias = rand.NextDouble();
+            toReturn.Bias = rand.Next();
 
             for (int c = 0; c < previousLayer.Neurons.Count; c++)
             {
                 Neuron previousNeuron = previousLayer.Neurons[c];
-                toReturn.Weights.Add(Weight.BuildWeight(previousNeuron, toReturn, rand.NextDouble()));
+                toReturn.Weights.Add(Weight.BuildWeight(previousNeuron, toReturn, rand.Next()));
             }
 
             return toReturn;
