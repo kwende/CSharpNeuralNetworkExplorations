@@ -47,15 +47,22 @@ namespace SimpleMLP.MLP
                     "Number of inputs supplied doesn't match the size of the input layer.");
             }
 
-            for (int c = 0; c < x.GetLength(0); c++)
+            for (int t = 0; t < x.GetLength(0); t++)
             {
                 for (int d = 0; d < x.GetLength(1); d++)
                 {
-                    ((InputNeuron)InputLayer.Neurons[d]).Output = x[c, d];
+                    ((InputNeuron)InputLayer.Neurons[d]).Output = x[t, d];
                 }
 
-                double[] output = Feedforward();
+                double[] outputs = Feedforward();
+                double error = 0;
+                for (int d = 0; d < outputs.Length; d++)
+                {
+                    double output = outputs[d];
+                    double expectedOutput = y[t, d];
 
+                    Math.CostFunction.ComputeDerivative(output, expectedOutput)
+                }
             }
         }
 

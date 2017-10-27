@@ -11,7 +11,13 @@ namespace SimpleMLP.Math
     {
         public static double Compute(double x)
         {
-            return 1 / (1 + Exp(-x)); 
+            return 1 / (1 + Exp(-x));
+        }
+
+        public static double ComputeDerivative(double x)
+        {
+            double sigmoid = Compute(x);
+            return sigmoid * (1 - sigmoid);
         }
     }
 }
