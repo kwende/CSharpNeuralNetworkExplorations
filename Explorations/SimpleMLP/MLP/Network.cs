@@ -47,25 +47,43 @@ namespace SimpleMLP.MLP
                     "Number of inputs supplied doesn't match the size of the input layer.");
             }
 
-            for (int t = 0; t < x.GetLength(0); t++)
+            int numberOfTrainingExamples = x.GetLength(0);
+            double outputLayerError = 0;
+
+            for (int t = 0; t < numberOfTrainingExamples; t++)
             {
-                for (int d = 0; d < x.GetLength(1); d++)
-                {
-                    ((InputNeuron)InputLayer.Neurons[d]).Output = x[t, d];
-                }
+                SetInputLayer(t, x);
 
+                // feed forward. 
                 double[] outputs = Feedforward();
-                double error = 0;
-                for (int d = 0; d < outputs.Length; d++)
-                {
-                    double output = outputs[d];
-                    double expectedOutput = y[t, d];
 
-                    error += Math.CostFunction.ComputeDerivative(output, expectedOutput); 
-                }
+                // compute the error of the output layer. 
+                outputLayerError += ComputeErrorForSingleTrainingData(t, outputs, y);
+            }
+        }
 
-                error /= (outputs.Length * 1.0);
-                error *= Math.Sigmoid.ComputeDerivative()
+        private double ComputeErrorForSingleTrainingData(int trainingIndex, double[] outputs, double[,] y)
+        {
+            double error = 0.0;
+            for (int d = 0; d < outputs.Length; d++)
+            {
+                double output = outputs[d];
+                double expectedOutput = y[trainingIndex, d];
+
+                error += Math.CostFunction.ComputeDerivative(output, expectedOutput) *
+                    Math.Sigmoid.ComputeDerivative(output);
+            }
+            error /= (y.GetLength(0) * 1.0);
+
+            return error;
+        }
+
+        private void SetInputLayer(int trainingIndex, double[,] x)
+        {
+            // set the inputs.
+            for (int d = 0; d < x.GetLength(1); d++)
+            {
+                ((InputNeuron)InputLayer.Neurons[d]).Output = x[trainingIndex, d];
             }
         }
 
