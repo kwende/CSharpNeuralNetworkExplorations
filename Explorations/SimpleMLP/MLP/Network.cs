@@ -52,17 +52,18 @@ namespace SimpleMLP.MLP
 
             for (int t = 0; t < numberOfTrainingExamples; t++)
             {
+                // set input. 
                 SetInputLayer(t, x);
 
-                // feed forward. 
+                // feed forward. get outputs. 
                 double[] outputs = Feedforward();
 
-                // compute the error of the output layer. 
-                outputLayerError += ComputeErrorForSingleTrainingData(t, outputs, y);
+                // compute the error of the outputs. 
+                outputLayerError += ComputeErrorForFeedforward(t, outputs, y);
             }
         }
 
-        private double ComputeErrorForSingleTrainingData(int trainingIndex, double[] outputs, double[,] y)
+        private double ComputeErrorForFeedforward(int trainingIndex, double[] outputs, double[,] y)
         {
             double error = 0.0;
             for (int d = 0; d < outputs.Length; d++)
