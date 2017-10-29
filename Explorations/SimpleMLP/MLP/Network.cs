@@ -48,7 +48,6 @@ namespace SimpleMLP.MLP
             }
 
             int numberOfTrainingExamples = x.GetLength(0);
-            double outputLayerError = 0;
 
             for (int t = 0; t < numberOfTrainingExamples; t++)
             {
@@ -56,27 +55,31 @@ namespace SimpleMLP.MLP
                 SetInputLayer(t, x);
 
                 // feed forward. get outputs. 
-                double[] outputs = Feedforward();
+                double[] outputLayerValues = Feedforward();
 
                 // compute the error of the outputs. 
-                outputLayerError += ComputeErrorForFeedforward(t, outputs, y);
+                double[] outputLayerErrors =
+                    ComputeErrorForOutputNeurons(t, outputLayerValues, y);
             }
         }
 
-        private double ComputeErrorForFeedforward(int trainingIndex, double[] outputs, double[,] y)
+        private double[] ComputeErrorForOutputNeurons(int trainingIndex, double[] outputs, double[,] y)
         {
-            double error = 0.0;
+            // See "OutputNeuronErrors.png"
+
+            int numberOfTrainingExamples = y.GetLength(0);
+
+            double[] errors = new double[outputs.Length];
             for (int d = 0; d < outputs.Length; d++)
             {
                 double output = outputs[d];
                 double expectedOutput = y[trainingIndex, d];
 
-                error += Math.CostFunction.ComputeDerivative(output, expectedOutput) *
-                    Math.Sigmoid.ComputeDerivative(output);
+                errors[d] = (Math.CostFunction.ComputeDerivative(output, expectedOutput) *
+                    Math.Sigmoid.ComputeDerivative(output)) / (numberOfTrainingExamples * 1.0);
             }
-            error /= (y.GetLength(0) * 1.0);
 
-            return error;
+            return errors;
         }
 
         private void SetInputLayer(int trainingIndex, double[,] x)

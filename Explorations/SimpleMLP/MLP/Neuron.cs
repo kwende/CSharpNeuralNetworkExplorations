@@ -9,5 +9,6 @@ namespace SimpleMLP.MLP
     public class Neuron
     {
         public double Output { get; set; }
+        public double Error { get; set; }
     }
 }
