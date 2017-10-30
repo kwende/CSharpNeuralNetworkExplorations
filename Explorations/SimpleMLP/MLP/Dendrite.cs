@@ -6,21 +6,21 @@ using System.Threading.Tasks;
 
 namespace SimpleMLP.MLP
 {
-    public class Weight
+    public class Dendrite
     {
         public Neuron UpStreamNeuron { get; private set; }
         public Neuron DownStreamNeuron { get; private set; }
-        public double Value { get; private set; }
-        private Weight()
+        public double Weight { get; private set; }
+        private Dendrite()
         {
         }
-        public static Weight BuildWeight(Neuron upstreamNeuron, Neuron downStreamNeuron, double value)
+        public static Dendrite BuildWeight(Neuron upstreamNeuron, Neuron downStreamNeuron, double weight)
         {
-            Weight toReturn = new Weight();
+            Dendrite toReturn = new Dendrite();
 
             toReturn.DownStreamNeuron = downStreamNeuron;
             toReturn.UpStreamNeuron = upstreamNeuron;
-            toReturn.Value = value;
+            toReturn.Weight = weight;
 
             return toReturn;
         }

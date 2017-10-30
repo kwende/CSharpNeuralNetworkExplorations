@@ -10,18 +10,19 @@ namespace SimpleMLP.MLP
     public class WeightedNeuron : Neuron
     {
         public double Bias { get; private set; }
-        public List<Weight> Weights { get; private set; }
+        public List<Dendrite> Dendrites { get; private set; }
         public List<double> Inputs { get; private set; }
+        public double TotalInput { get; set; }
 
         private WeightedNeuron()
         {
-            Weights = new List<Weight>();
+            Dendrites = new List<Dendrite>();
             Inputs = new List<double>();
         }
 
         public void ComputeOutput()
         {
-            if (Inputs.Count != Weights.Count)
+            if (Inputs.Count != Dendrites.Count)
             {
                 throw new InputAndWeightCountMismatchException();
             }
@@ -29,12 +30,12 @@ namespace SimpleMLP.MLP
             double k = 0.0;
             for (int c = 0; c < Inputs.Count; c++)
             {
-                k += Inputs[c] * Weights[c].Value;
+                k += Inputs[c] * Dendrites[c].Weight;
             }
 
-            k += Bias;
+            TotalInput = k + Bias;
 
-            Output = Math.Sigmoid.Compute(k);
+            Output = Math.Sigmoid.Compute(TotalInput);
         }
 
         public static WeightedNeuron BuildNeuron(Math.RandomNormal rand, Layer previousLayer)
@@ -46,7 +47,7 @@ namespace SimpleMLP.MLP
             for (int c = 0; c < previousLayer.Neurons.Count; c++)
             {
                 Neuron previousNeuron = previousLayer.Neurons[c];
-                toReturn.Weights.Add(Weight.BuildWeight(previousNeuron, toReturn, rand.Next()));
+                toReturn.Dendrites.Add(Dendrite.BuildWeight(previousNeuron, toReturn, rand.Next()));
             }
 
             return toReturn;

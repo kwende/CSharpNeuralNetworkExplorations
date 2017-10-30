@@ -53,7 +53,31 @@ namespace SimpleMLP.MLP
                     expectedOutput, actualOutput, totalNumberOfTrainingExamples);
             }
 
+            // Compute error for each neuron in each layer moving backwards (backprop). 
+            Layer nextLayer = OutputLayer;
+            for (int d = HiddenLayers.Count - 1; d >= 0; d--)
+            {
+                HiddenLayer hiddenLayer = HiddenLayers[d];
+                for (int e = 0; e < hiddenLayer.Neurons.Count; e++)
+                {
+                    WeightedNeuron thisLayerNeuron = (WeightedNeuron)hiddenLayer.Neurons[e];
+                    double input = thisLayerNeuron.TotalInput;
 
+                    double errorSum = 0.0;
+                    for (int f = 0; f < nextLayer.Neurons.Count; f++)
+                    {
+                        WeightedNeuron nextLayerNeuron = (WeightedNeuron)nextLayer.Neurons[f];
+
+                        double error = nextLayerNeuron.Error;
+                        double weight = nextLayerNeuron.Dendrites[e].Weight;
+
+                        errorSum += error * weight;
+                    }
+
+                    double thisLayerNeuronError = Math.Sigmoid.ComputeDerivative(input) * errorSum;
+                    thisLayerNeuron.Error = thisLayerNeuronError;
+                }
+            }
         }
 
         //public void Train(double[,] x, double[,] y)

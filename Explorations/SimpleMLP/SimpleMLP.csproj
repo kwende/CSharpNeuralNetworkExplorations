@@ -57,7 +57,7 @@
     <Compile Include="MLP\TrainingData.cs" />
     <Compile Include="MLP\WeightedNeuron.cs" />
     <Compile Include="MLP\OutputLayer.cs" />
-    <Compile Include="MLP\Weight.cs" />
+    <Compile Include="MLP\Dendrite.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
