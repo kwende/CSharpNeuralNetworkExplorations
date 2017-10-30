@@ -39,59 +39,82 @@ namespace SimpleMLP.MLP
             return network;
         }
 
-        public void Train(double[,] x, double[,] y)
+        public void Backpropagation(double[] expectedValues, int totalNumberOfTrainingExamples)
         {
-            if (x.GetLength(1) != InputLayer.Neurons.Count)
+            // Compute error for the output neurons to get the ball rolling. 
+            // See https://github.com/kwende/CSharpNeuralNetworkExplorations/blob/master/Explorations/SimpleMLP/Documentation/OutputNeuronErrors.png
+            for (int d = 0; d < expectedValues.Length; d++)
             {
-                throw new ArgumentOutOfRangeException("inputs",
-                    "Number of inputs supplied doesn't match the size of the input layer.");
+                Neuron outputNeuronBeingExamined = OutputLayer.Neurons[d];
+                double expectedOutput = expectedValues[d];
+                double actualOutput = outputNeuronBeingExamined.Output;
+
+                outputNeuronBeingExamined.Error = Math.Error.ComputeErrorForOutputNeuron(
+                    expectedOutput, actualOutput, totalNumberOfTrainingExamples);
             }
 
-            int numberOfTrainingExamples = x.GetLength(0);
 
-            for (int t = 0; t < numberOfTrainingExamples; t++)
-            {
-                // set input. 
-                SetInputLayer(t, x);
-
-                // feed forward. get outputs. 
-                double[] outputLayerValues = Feedforward();
-
-                // compute the error of the outputs. 
-                double[] outputLayerErrors =
-                    ComputeErrorForOutputNeurons(t, outputLayerValues, y);
-            }
         }
 
-        private double[] ComputeErrorForOutputNeurons(int trainingIndex, double[] outputs, double[,] y)
-        {
-            // See "OutputNeuronErrors.png"
+        //public void Train(double[,] x, double[,] y)
+        //{
+        //    if (x.GetLength(1) != InputLayer.Neurons.Count)
+        //    {
+        //        throw new ArgumentOutOfRangeException("inputs",
+        //            "Number of inputs supplied doesn't match the size of the input layer.");
+        //    }
 
-            int numberOfTrainingExamples = y.GetLength(0);
+        //    int numberOfTrainingExamples = x.GetLength(0);
 
-            double[] errors = new double[outputs.Length];
-            for (int d = 0; d < outputs.Length; d++)
-            {
-                double output = outputs[d];
-                double expectedOutput = y[trainingIndex, d];
+        //    for (int t = 0; t < numberOfTrainingExamples; t++)
+        //    {
+        //        // set input. 
+        //        SetInputLayer(t, x);
 
-                errors[d] = (Math.CostFunction.ComputeDerivative(output, expectedOutput) *
-                    Math.Sigmoid.ComputeDerivative(output)) / (numberOfTrainingExamples * 1.0);
-            }
+        //        // feed forward. get outputs. 
+        //        double[] outputLayerValues = Feedforward();
 
-            return errors;
-        }
+        //        // compute the error of the outputs. 
+        //        double[] outputLayerErrors =
+        //            ComputeErrorForOutputNeurons(t, outputLayerValues, y);
 
-        private void SetInputLayer(int trainingIndex, double[,] x)
+        //        // assign the errors to the output neurons. 
+        //        for (int n = 0; n < outputLayerErrors.Length; n++)
+        //        {
+
+        //        }
+        //    }
+        //}
+
+        //private double[] ComputeErrorForOutputNeurons(int trainingIndex, double[] outputs, double[,] y)
+        //{
+        //    // 
+
+        //    int numberOfTrainingExamples = y.GetLength(0);
+
+        //    double[] errors = new double[outputs.Length];
+        //    for (int d = 0; d < outputs.Length; d++)
+        //    {
+        //        double output = outputs[d];
+        //        double expectedOutput = y[trainingIndex, d];
+
+        //        errors[d] = (Math.CostFunction.ComputeDerivative(output, expectedOutput) *
+        //            Math.Sigmoid.ComputeDerivative(output)) / (numberOfTrainingExamples * 1.0);
+        //    }
+
+        //    return errors;
+        //}
+
+        public void SetInputLayer(double[] x)
         {
             // set the inputs.
-            for (int d = 0; d < x.GetLength(1); d++)
+            for (int d = 0; d < x.Length; d++)
             {
-                ((InputNeuron)InputLayer.Neurons[d]).Output = x[trainingIndex, d];
+                ((InputNeuron)InputLayer.Neurons[d]).Output = x[d];
             }
         }
 
-        private double[] Feedforward()
+        public void Feedforward()
         {
             Layer previousLayer = (Layer)InputLayer;
 
@@ -124,7 +147,7 @@ namespace SimpleMLP.MLP
                 currentLayerNeuron.ComputeOutput();
             }
 
-            return OutputLayer.Neurons.Select(n => n.Output).ToArray();
+
         }
     }
 }

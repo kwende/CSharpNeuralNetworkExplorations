@@ -16,10 +16,19 @@ namespace SimpleMLP
 
             Network network = Network.BuildNetwork(1, 1, 5, 15);
 
-            double[,] x = new double[,] { { 0 }, { 1 }, { 2 }, { 3 }, { 4 } };
-            double[,] y = new double[,] { { 1 }, { 2 }, { 3 }, { 4 }, { 5 } };
+            List<TrainingData> trainingData = new List<TrainingData>();
+            for (int c = 0; c < 10; c++)
+            {
+                TrainingData data = new TrainingData
+                {
+                    X = new double[1] { c },
+                    Y = new double[1] { c + 1 },
+                };
+                trainingData.Add(data);
+            }
 
-            network.Train(x, y);
+            NetworkTrainer networkTrainer = new NetworkTrainer();
+            networkTrainer.Train(network, trainingData);
 
             return;
         }
