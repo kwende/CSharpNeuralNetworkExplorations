@@ -42,6 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Documentation\NetworkInDGML.cs" />
     <Compile Include="Math\CostFunction.cs" />
     <Compile Include="Math\RandomNormal.cs" />
     <Compile Include="Math\Sigmoid.cs" />
@@ -51,9 +52,8 @@
     <Compile Include="MLP\Layer.cs" />
     <Compile Include="MLP\Network.cs" />
     <Compile Include="MLP\NetworkTrainer.cs" />
-    <Compile Include="MLP\Neuron.cs" />
     <Compile Include="MLP\TrainingData.cs" />
-    <Compile Include="MLP\WeightedNeuron.cs" />
+    <Compile Include="MLP\Neuron.cs" />
     <Compile Include="MLP\OutputLayer.cs" />
     <Compile Include="MLP\Dendrite.cs" />
     <Compile Include="Program.cs" />

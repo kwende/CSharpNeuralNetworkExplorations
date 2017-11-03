@@ -17,7 +17,7 @@ namespace SimpleMLP.MLP
 
             for (int c = 0; c < numberOfNeurons; c++)
             {
-                toReturn.Neurons.Add(WeightedNeuron.BuildNeuron(rand, previousLayer));
+                toReturn.Neurons.Add(Neuron.BuildNeuron(rand, previousLayer));
             }
 
             return toReturn;

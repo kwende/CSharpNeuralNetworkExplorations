@@ -16,7 +16,7 @@ namespace SimpleMLP.MLP
             InputLayer toReturn = new InputLayer();
             for (int c = 0; c < numberOfNeurons; c++)
             {
-                toReturn.Neurons.Add(WeightedNeuron.BuildNeuron(rand, null));
+                toReturn.Neurons.Add(Neuron.BuildNeuron(rand, null));
             }
             return toReturn;
         }

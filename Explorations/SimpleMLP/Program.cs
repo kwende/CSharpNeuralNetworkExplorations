@@ -1,4 +1,5 @@
-﻿using SimpleMLP.MLP;
+﻿using SimpleMLP.Documentation;
+using SimpleMLP.MLP;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -47,6 +48,9 @@ namespace SimpleMLP
 
             Network network = Network.BuildNetwork(2, 1, 5, 15);
 
+            NetworkInDGML dgmlRepresentation = NetworkInDGML.Create(network);
+            dgmlRepresentation.Serialize("networkTopology.dgml");
+
             List<TrainingData> trainingData = BuildXORTrainingData();
 
             NetworkTrainer networkTrainer = new NetworkTrainer();
@@ -58,6 +62,8 @@ namespace SimpleMLP
 
                 Console.WriteLine($"Output: {actualOutput[0]}, Expected Output: {data.Y[0]}");
             }
+
+            Console.ReadLine();
 
             return;
         }

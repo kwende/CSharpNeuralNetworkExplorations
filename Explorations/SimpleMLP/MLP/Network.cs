@@ -42,6 +42,7 @@ namespace SimpleMLP.MLP
         public void UpdateNetwork(double stepSize)
         {
             List<Layer> layersToUpdate = new List<Layer>();
+            layersToUpdate.Add(InputLayer); 
             foreach (HiddenLayer hiddenLayer in HiddenLayers)
             {
                 layersToUpdate.Add(hiddenLayer);
@@ -50,14 +51,14 @@ namespace SimpleMLP.MLP
 
             for (int c = layersToUpdate.Count - 1; c >= 0; c--)
             {
-                foreach (WeightedNeuron neuron in layersToUpdate[c].Neurons)
+                foreach (Neuron neuron in layersToUpdate[c].Neurons)
                 {
                     double delta = stepSize * neuron.BatchErrors.Average();
                     neuron.Bias = neuron.Bias - delta;
 
                     foreach (Dendrite dendrite in neuron.Dendrites)
                     {
-                        dendrite.Weight = dendrite.Weight - (delta * ((WeightedNeuron)dendrite.UpStreamNeuron).Output);
+                        dendrite.Weight = dendrite.Weight - (delta * ((Neuron)dendrite.UpStreamNeuron).Output);
                     }
                 }
             }
@@ -90,23 +91,44 @@ namespace SimpleMLP.MLP
                 HiddenLayer hiddenLayer = HiddenLayers[d];
                 for (int e = 0; e < hiddenLayer.Neurons.Count; e++)
                 {
-                    WeightedNeuron thisLayerNeuron = (WeightedNeuron)hiddenLayer.Neurons[e];
+                    Neuron thisLayerNeuron = (Neuron)hiddenLayer.Neurons[e];
                     double input = thisLayerNeuron.TotalInput;
 
                     double errorSum = 0.0;
                     for (int f = 0; f < nextLayer.Neurons.Count; f++)
                     {
-                        WeightedNeuron nextLayerNeuron = (WeightedNeuron)nextLayer.Neurons[f];
+                        Neuron nextLayerNeuron = (Neuron)nextLayer.Neurons[f];
 
                         double error = nextLayerNeuron.BatchErrors.Last();
                         double weight = nextLayerNeuron.Dendrites[e].Weight;
 
-                        errorSum += error * weight;
+                        errorSum += error * weight * Math.Sigmoid.ComputeDerivative(input);
                     }
 
-                    double thisLayerNeuronError = Math.Sigmoid.ComputeDerivative(input) * errorSum;
-                    thisLayerNeuron.BatchErrors.Add(thisLayerNeuronError);
+                    //double thisLayerNeuronError = Math.Sigmoid.ComputeDerivative(input) * errorSum;
+                    thisLayerNeuron.BatchErrors.Add(errorSum);
                 }
+            }
+
+            // Input layer errors. 
+            for (int e = 0; e < InputLayer.Neurons.Count; e++)
+            {
+                Neuron thisLayerNeuron = (Neuron)InputLayer.Neurons[e];
+                double input = thisLayerNeuron.TotalInput;
+
+                double errorSum = 0.0;
+                for (int f = 0; f < nextLayer.Neurons.Count; f++)
+                {
+                    Neuron nextLayerNeuron = (Neuron)nextLayer.Neurons[f];
+
+                    double error = nextLayerNeuron.BatchErrors.Last();
+                    double weight = nextLayerNeuron.Dendrites[e].Weight;
+
+                    errorSum += error * weight;
+                }
+
+                double thisLayerNeuronError = Math.Sigmoid.ComputeDerivative(input) * errorSum;
+                thisLayerNeuron.BatchErrors.Add(thisLayerNeuronError);
             }
 
             return averageOutputError;
@@ -125,7 +147,7 @@ namespace SimpleMLP.MLP
         {
             SetInputLayer(inputs);
             Feedforward();
-            return OutputLayer.Neurons.Select(n => ((WeightedNeuron)n).Output).ToArray();
+            return OutputLayer.Neurons.Select(n => ((Neuron)n).Output).ToArray();
         }
 
         public void Feedforward()
@@ -134,7 +156,7 @@ namespace SimpleMLP.MLP
 
             foreach (HiddenLayer hiddenLayer in HiddenLayers)
             {
-                foreach (WeightedNeuron currentLayerNeuron in hiddenLayer.Neurons)
+                foreach (Neuron currentLayerNeuron in hiddenLayer.Neurons)
                 {
                     currentLayerNeuron.Inputs.Clear();
 
@@ -152,7 +174,7 @@ namespace SimpleMLP.MLP
             //foreach (WeightedNeuron currentLayerNeuron in OutputLayer.Neurons)
             for (int i = 0; i < OutputLayer.Neurons.Count; i++)
             {
-                WeightedNeuron currentLayerNeuron = (WeightedNeuron)OutputLayer.Neurons[i];
+                Neuron currentLayerNeuron = (Neuron)OutputLayer.Neurons[i];
                 currentLayerNeuron.Inputs.Clear();
 
                 foreach (Neuron previousLayerNeuron in previousLayer.Neurons)
