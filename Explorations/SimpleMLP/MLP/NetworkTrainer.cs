@@ -12,9 +12,9 @@ namespace SimpleMLP.MLP
         {
             int trainingDataLength = trainingData.Count;
 
-            for(int iterationCount = 0;iterationCount < 100;iterationCount++)
+            for (int iterationCount = 0; iterationCount < 100; iterationCount++)
             {
-                double averageOutputError = 0.0;
+                double debugAverageOutputError = 0.0;
                 // iterate over each instance of the training data. 
                 for (int t = 0; t < trainingDataLength; t++)
                 {
@@ -26,9 +26,9 @@ namespace SimpleMLP.MLP
                     // feed forward. 
                     network.Feedforward();
                     // back propagation
-                    averageOutputError += network.Backpropagation(data.Y);
+                    debugAverageOutputError += network.Backpropagation(data.Y);
                 }
-                Console.WriteLine($"Average network error: {averageOutputError / (trainingDataLength * 1.0)}");
+                //Console.WriteLine($"Average network error: {averageOutputError / (trainingDataLength * 1.0)}");
 
                 // update the network. 
                 network.UpdateNetwork(1.0);

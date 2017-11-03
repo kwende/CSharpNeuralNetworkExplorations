@@ -9,40 +9,55 @@ namespace SimpleMLP
 {
     class Program
     {
+        static List<TrainingData> BuildXORTrainingData()
+        {
+            List<TrainingData> trainingData = new List<TrainingData>();
+
+            trainingData.Add(new TrainingData
+            {
+                X = new double[2] { 0, 0 },
+                Y = new double[1] { 0 }
+            });
+
+            trainingData.Add(new TrainingData
+            {
+                X = new double[2] { 1, 0 },
+                Y = new double[1] { 1 }
+            });
+
+            trainingData.Add(new TrainingData
+            {
+                X = new double[2] { 0, 1 },
+                Y = new double[1] { 1 }
+            });
+
+            trainingData.Add(new TrainingData
+            {
+                X = new double[2] { 1, 1 },
+                Y = new double[1] { 0 }
+            });
+
+            return trainingData;
+        }
+
         static void Main(string[] args)
         {
             // What I cannot create, I do not understand. 
             // ~Richard P. Feynman
 
-            Network network = Network.BuildNetwork(6, 6, 5, 15);
+            Network network = Network.BuildNetwork(2, 1, 5, 15);
 
-            List<TrainingData> trainingData = new List<TrainingData>();
-            for (int c = 0; c < 5; c++)
-            {
-                TrainingData data = new TrainingData
-                {
-                    X = new double[6],
-                    Y = new double[6]
-                };
-
-                // input a number in one-hot encoding
-                data.X[c] = 1;
-                // get back the next number in one-hot encoding. 
-                data.Y[c + 1] = 1;
-
-                trainingData.Add(data);
-            }
+            List<TrainingData> trainingData = BuildXORTrainingData();
 
             NetworkTrainer networkTrainer = new NetworkTrainer();
             networkTrainer.Train(network, trainingData);
 
-            TrainingData testData = trainingData[1];
-            double[] input = testData.X;
-            double[] expectedOutput = testData.Y;
+            foreach (TrainingData data in trainingData)
+            {
+                double[] actualOutput = network.Execute(data.X);
 
-            double[] actualOutput = network.Execute(trainingData[1].X);
-
-            Console.WriteLine($"Got ({string.Join(",", actualOutput.Select(n => n.ToString()))}), Expected ({string.Join(",", expectedOutput.Select(n => n.ToString()))})");
+                Console.WriteLine($"Output: {actualOutput[0]}, Expected Output: {data.Y[0]}");
+            }
 
             return;
         }
