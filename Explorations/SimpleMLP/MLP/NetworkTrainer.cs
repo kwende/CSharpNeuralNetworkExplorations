@@ -23,7 +23,7 @@ namespace SimpleMLP.MLP
                 // feed forward. 
                 network.Feedforward();
                 // back propagation
-                network.Backpropagation(data.Y, trainingData.Count);
+                network.Backpropagation(data.Y);
             }
         }
     }

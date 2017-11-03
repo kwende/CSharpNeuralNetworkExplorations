@@ -39,7 +39,25 @@ namespace SimpleMLP.MLP
             return network;
         }
 
-        public void Backpropagation(double[] expectedValues, int totalNumberOfTrainingExamples)
+        public void UpdateNetwork(double stepSize)
+        {
+            List<Layer> layersToUpdate = new List<Layer>();
+            foreach (HiddenLayer hiddenLayer in HiddenLayers)
+            {
+                layersToUpdate.Add(hiddenLayer);
+            }
+            layersToUpdate.Add(OutputLayer);
+
+            for (int c = layersToUpdate.Count - 1; c >= 0; c--)
+            {
+                foreach (WeightedNeuron neuron in layersToUpdate[c].Neurons)
+                {
+                    neuron.BatchErrors.Average();
+                }
+            }
+        }
+
+        public void Backpropagation(double[] expectedValues)
         {
             // Compute error for the output neurons to get the ball rolling. 
             // See https://github.com/kwende/CSharpNeuralNetworkExplorations/blob/master/Explorations/SimpleMLP/Documentation/OutputNeuronErrors.png
@@ -49,8 +67,10 @@ namespace SimpleMLP.MLP
                 double expectedOutput = expectedValues[d];
                 double actualOutput = outputNeuronBeingExamined.Output;
 
-                outputNeuronBeingExamined.Error = Math.Error.ComputeErrorForOutputNeuron(
-                    expectedOutput, actualOutput, totalNumberOfTrainingExamples);
+                double error = (Math.CostFunction.ComputeDerivative(actualOutput, expectedOutput) *
+                    Math.Sigmoid.ComputeDerivative(actualOutput));
+
+                outputNeuronBeingExamined.BatchErrors.Add(error);
             }
 
             // Compute error for each neuron in each layer moving backwards (backprop). 
@@ -68,16 +88,18 @@ namespace SimpleMLP.MLP
                     {
                         WeightedNeuron nextLayerNeuron = (WeightedNeuron)nextLayer.Neurons[f];
 
-                        double error = nextLayerNeuron.Error;
+                        double error = nextLayerNeuron.BatchErrors.Last();
                         double weight = nextLayerNeuron.Dendrites[e].Weight;
 
                         errorSum += error * weight;
                     }
 
                     double thisLayerNeuronError = Math.Sigmoid.ComputeDerivative(input) * errorSum;
-                    thisLayerNeuron.Error = thisLayerNeuronError;
+                    thisLayerNeuron.BatchErrors.Add(thisLayerNeuronError);
                 }
             }
+
+
         }
 
         //public void Train(double[,] x, double[,] y)

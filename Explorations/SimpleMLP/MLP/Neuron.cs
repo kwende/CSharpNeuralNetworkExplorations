@@ -6,9 +6,13 @@ using System.Threading.Tasks;
 
 namespace SimpleMLP.MLP
 {
-    public class Neuron
+    public abstract class Neuron
     {
+        public Neuron()
+        {
+            BatchErrors = new List<double>(); 
+        }
         public double Output { get; set; }
-        public double Error { get; set; }
+        public List<double> BatchErrors { get; set; }
     }
 }
