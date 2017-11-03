@@ -20,7 +20,7 @@ namespace SimpleMLP.MLP
             Inputs = new List<double>();
         }
 
-        public void ComputeOutput()
+        public double ComputeOutput()
         {
             if (Inputs.Count != Dendrites.Count)
             {
@@ -36,6 +36,8 @@ namespace SimpleMLP.MLP
             TotalInput = k + Bias;
 
             Output = Math.Sigmoid.Compute(TotalInput);
+
+            return Output;
         }
 
         public static WeightedNeuron BuildNeuron(Math.RandomNormal rand, Layer previousLayer)
@@ -44,7 +46,7 @@ namespace SimpleMLP.MLP
 
             toReturn.Bias = rand.Next();
 
-            if(previousLayer != null)
+            if (previousLayer != null)
             {
                 for (int c = 0; c < previousLayer.Neurons.Count; c++)
                 {

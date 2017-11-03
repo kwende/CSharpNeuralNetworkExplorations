@@ -33,9 +33,6 @@ namespace SimpleMLP.MLP
                 // update the network. 
                 network.UpdateNetwork(1.0);
             }
-
-            Console.WriteLine("Done");
-            Console.ReadLine(); 
         }
     }
 }

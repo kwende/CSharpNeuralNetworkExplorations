@@ -121,6 +121,13 @@ namespace SimpleMLP.MLP
             }
         }
 
+        public double[] Execute(double[] inputs)
+        {
+            SetInputLayer(inputs);
+            Feedforward();
+            return OutputLayer.Neurons.Select(n => ((WeightedNeuron)n).Output).ToArray();
+        }
+
         public void Feedforward()
         {
             Layer previousLayer = (Layer)InputLayer;
@@ -142,8 +149,10 @@ namespace SimpleMLP.MLP
                 previousLayer = hiddenLayer;
             }
 
-            foreach (WeightedNeuron currentLayerNeuron in OutputLayer.Neurons)
+            //foreach (WeightedNeuron currentLayerNeuron in OutputLayer.Neurons)
+            for (int i = 0; i < OutputLayer.Neurons.Count; i++)
             {
+                WeightedNeuron currentLayerNeuron = (WeightedNeuron)OutputLayer.Neurons[i];
                 currentLayerNeuron.Inputs.Clear();
 
                 foreach (Neuron previousLayerNeuron in previousLayer.Neurons)
