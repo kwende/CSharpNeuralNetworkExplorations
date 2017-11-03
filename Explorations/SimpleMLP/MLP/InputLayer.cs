@@ -11,12 +11,12 @@ namespace SimpleMLP.MLP
         private InputLayer() : base()
         {
         }
-        public static InputLayer BuildInputLayer(Math.RandomNormal rand, int number)
+        public static InputLayer BuildInputLayer(Math.RandomNormal rand, int numberOfNeurons)
         {
             InputLayer toReturn = new InputLayer();
-            for (int c = 0; c < number; c++)
+            for (int c = 0; c < numberOfNeurons; c++)
             {
-                toReturn.Neurons.Add(new InputNeuron());
+                toReturn.Neurons.Add(WeightedNeuron.BuildNeuron(rand, null));
             }
             return toReturn;
         }

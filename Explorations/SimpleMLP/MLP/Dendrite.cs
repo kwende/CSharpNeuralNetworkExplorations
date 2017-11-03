@@ -8,9 +8,9 @@ namespace SimpleMLP.MLP
 {
     public class Dendrite
     {
-        public Neuron UpStreamNeuron { get; private set; }
-        public Neuron DownStreamNeuron { get; private set; }
-        public double Weight { get; private set; }
+        public Neuron UpStreamNeuron { get; set; }
+        public Neuron DownStreamNeuron { get; set; }
+        public double Weight { get; set; }
         private Dendrite()
         {
         }

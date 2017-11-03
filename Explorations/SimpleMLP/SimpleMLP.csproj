@@ -47,7 +47,6 @@
     <Compile Include="Math\Sigmoid.cs" />
     <Compile Include="MLP\Exceptionx\InputAndWeightCountMismatchException.cs" />
     <Compile Include="MLP\InputLayer.cs" />
-    <Compile Include="MLP\InputNeuron.cs" />
     <Compile Include="MLP\HiddenLayer.cs" />
     <Compile Include="MLP\Layer.cs" />
     <Compile Include="MLP\Network.cs" />
