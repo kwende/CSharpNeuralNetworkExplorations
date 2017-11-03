@@ -3,12 +3,20 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace SimpleMLP.MLP
 {
     public class Neuron
     {
+        private static int _uniqueId = 0;
+
+        private static int GetNextUniqueId()
+        {
+            return Interlocked.Increment(ref _uniqueId);
+        }
+
         public double Bias { get; set; }
         public List<Dendrite> Dendrites { get; set; }
         public List<double> Inputs { get; set; }
@@ -22,7 +30,7 @@ namespace SimpleMLP.MLP
             Dendrites = new List<Dendrite>();
             Inputs = new List<double>();
             BatchErrors = new List<double>();
-            UniqueName = Guid.NewGuid().ToString().Replace("-", "");
+            UniqueName = GetNextUniqueId().ToString();
         }
 
         public double ComputeOutput()
@@ -41,6 +49,8 @@ namespace SimpleMLP.MLP
             TotalInput = k + Bias;
 
             Output = Math.Sigmoid.Compute(TotalInput);
+
+            Inputs.Clear();
 
             return Output;
         }
@@ -61,6 +71,11 @@ namespace SimpleMLP.MLP
             }
 
             return toReturn;
+        }
+
+        public override string ToString()
+        {
+            return $"Neuron {UniqueName}";
         }
     }
 }

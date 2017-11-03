@@ -28,7 +28,7 @@ namespace SimpleMLP.Documentation
             {
                 Node node = new Node();
                 node.Id = neuron.UniqueName;
-                node.Label = "";
+                node.Label = neuron.UniqueName;
 
                 ret.AddNode(node);
             }

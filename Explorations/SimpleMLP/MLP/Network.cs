@@ -42,7 +42,7 @@ namespace SimpleMLP.MLP
         public void UpdateNetwork(double stepSize)
         {
             List<Layer> layersToUpdate = new List<Layer>();
-            layersToUpdate.Add(InputLayer); 
+            layersToUpdate.Add(InputLayer);
             foreach (HiddenLayer hiddenLayer in HiddenLayers)
             {
                 layersToUpdate.Add(hiddenLayer);
@@ -95,12 +95,14 @@ namespace SimpleMLP.MLP
                     double input = thisLayerNeuron.TotalInput;
 
                     double errorSum = 0.0;
-                    for (int f = 0; f < nextLayer.Neurons.Count; f++)
+                    List<Dendrite> downStreamDendrites = nextLayer.Neurons.SelectMany(n => n.Dendrites.Where(l => l.UpStreamNeuron == thisLayerNeuron)).ToList();
+                    for (int f = 0; f < downStreamDendrites.Count; f++)
                     {
-                        Neuron nextLayerNeuron = (Neuron)nextLayer.Neurons[f];
+                        Dendrite currentDendrite = downStreamDendrites[f];
+                        Neuron downStreamNeuron = currentDendrite.DownStreamNeuron;
 
-                        double error = nextLayerNeuron.BatchErrors.Last();
-                        double weight = nextLayerNeuron.Dendrites[e].Weight;
+                        double error = downStreamNeuron.BatchErrors.Last();
+                        double weight = currentDendrite.Weight;
 
                         errorSum += error * weight * Math.Sigmoid.ComputeDerivative(input);
                     }
@@ -108,6 +110,8 @@ namespace SimpleMLP.MLP
                     //double thisLayerNeuronError = Math.Sigmoid.ComputeDerivative(input) * errorSum;
                     thisLayerNeuron.BatchErrors.Add(errorSum);
                 }
+
+                nextLayer = hiddenLayer;
             }
 
             // Input layer errors. 
@@ -117,14 +121,16 @@ namespace SimpleMLP.MLP
                 double input = thisLayerNeuron.TotalInput;
 
                 double errorSum = 0.0;
-                for (int f = 0; f < nextLayer.Neurons.Count; f++)
+                List<Dendrite> downStreamDendrites = nextLayer.Neurons.SelectMany(n => n.Dendrites.Where(l => l.UpStreamNeuron == thisLayerNeuron)).ToList();
+                for (int f = 0; f < downStreamDendrites.Count; f++)
                 {
-                    Neuron nextLayerNeuron = (Neuron)nextLayer.Neurons[f];
+                    Dendrite currentDendrite = downStreamDendrites[f];
+                    Neuron downStreamNeuron = currentDendrite.DownStreamNeuron;
 
-                    double error = nextLayerNeuron.BatchErrors.Last();
-                    double weight = nextLayerNeuron.Dendrites[e].Weight;
+                    double error = downStreamNeuron.BatchErrors.Last();
+                    double weight = currentDendrite.Weight;
 
-                    errorSum += error * weight;
+                    errorSum += error * weight * Math.Sigmoid.ComputeDerivative(input);
                 }
 
                 double thisLayerNeuronError = Math.Sigmoid.ComputeDerivative(input) * errorSum;
@@ -158,8 +164,6 @@ namespace SimpleMLP.MLP
             {
                 foreach (Neuron currentLayerNeuron in hiddenLayer.Neurons)
                 {
-                    currentLayerNeuron.Inputs.Clear();
-
                     foreach (Neuron previousLayerNeuron in previousLayer.Neurons)
                     {
                         currentLayerNeuron.Inputs.Add(previousLayerNeuron.Output);
@@ -175,7 +179,6 @@ namespace SimpleMLP.MLP
             for (int i = 0; i < OutputLayer.Neurons.Count; i++)
             {
                 Neuron currentLayerNeuron = (Neuron)OutputLayer.Neurons[i];
-                currentLayerNeuron.Inputs.Clear();
 
                 foreach (Neuron previousLayerNeuron in previousLayer.Neurons)
                 {

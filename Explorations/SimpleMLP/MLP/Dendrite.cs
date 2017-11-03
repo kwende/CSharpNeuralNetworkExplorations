@@ -24,5 +24,9 @@ namespace SimpleMLP.MLP
 
             return toReturn;
         }
+        public override string ToString()
+        {
+            return $"{UpStreamNeuron}-->{DownStreamNeuron}";
+        }
     }
 }
