@@ -4,23 +4,33 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace SimpleMLP.MLP
 {
     public class Network
     {
-        public InputLayer InputLayer { get; private set; }
-        public List<HiddenLayer> HiddenLayers { get; private set; }
-        public OutputLayer OutputLayer { get; private set; }
+        public InputLayer InputLayer { get; set; }
+        public List<HiddenLayer> HiddenLayers { get; set; }
+        public OutputLayer OutputLayer { get; set; }
 
         private Network()
         {
             HiddenLayers = new List<HiddenLayer>();
         }
 
+        public void SerializeTo(string xmlPath)
+        {
+            XmlSerializer serializer = new XmlSerializer(typeof(Network));
+            using (FileStream fout = File.Create(xmlPath))
+            {
+                serializer.Serialize(fout, this);
+            }
+        }
+
         public static Network BuildNetwork(int inputNeuronCount, int outputNeuronCount, params int[] hiddenLayerCounts)
         {
-            Math.RandomNormal rand = new Math.RandomNormal(0, 1);
+            Math.RandomNormal rand = new Math.RandomNormal(0, 3);
 
             Network network = new Network();
 
@@ -43,7 +53,6 @@ namespace SimpleMLP.MLP
         public void UpdateNetwork(double stepSize)
         {
             List<Layer> layersToUpdate = new List<Layer>();
-            layersToUpdate.Add(InputLayer);
             foreach (HiddenLayer hiddenLayer in HiddenLayers)
             {
                 layersToUpdate.Add(hiddenLayer);
@@ -59,14 +68,9 @@ namespace SimpleMLP.MLP
 
                     neuron.Bias = neuron.Bias - (stepSize * delta);
 
-                    //if (neuron.UniqueName == "8")
-                    //{
-                    //    File.AppendAllText("C:/users/brush/desktop/8_bias.csv", $"{delta},{neuron.Bias}\n");
-                    //}
-
                     foreach (Dendrite dendrite in neuron.Dendrites)
                     {
-                        dendrite.Weight = dendrite.Weight - 
+                        dendrite.Weight = dendrite.Weight -
                             (stepSize * (delta * ((Neuron)dendrite.UpStreamNeuron).Activation));
                     }
                 }
@@ -124,29 +128,6 @@ namespace SimpleMLP.MLP
                 nextLayer = hiddenLayer;
             }
 
-            // Input layer errors. 
-            for (int e = 0; e < InputLayer.Neurons.Count; e++)
-            {
-                Neuron thisLayerNeuron = (Neuron)InputLayer.Neurons[e];
-                double input = thisLayerNeuron.TotalInput;
-
-                double errorSum = 0.0;
-                List<Dendrite> downStreamDendrites = nextLayer.Neurons.SelectMany(n => n.Dendrites.Where(l => l.UpStreamNeuron == thisLayerNeuron)).ToList();
-                for (int f = 0; f < downStreamDendrites.Count; f++)
-                {
-                    Dendrite currentDendrite = downStreamDendrites[f];
-                    Neuron downStreamNeuron = currentDendrite.DownStreamNeuron;
-
-                    double error = downStreamNeuron.BatchErrors.Last();
-                    double weight = currentDendrite.Weight;
-
-                    errorSum += error * weight;
-                }
-
-                double thisLayerNeuronError = Math.Sigmoid.ComputeDerivative(input) * errorSum;
-                thisLayerNeuron.BatchErrors.Add(thisLayerNeuronError * Math.Sigmoid.ComputeDerivative(input));
-            }
-
             return averagedOutputDelta;
         }
 
@@ -168,7 +149,10 @@ namespace SimpleMLP.MLP
 
         public void Feedforward()
         {
-            Layer previousLayer = (Layer)InputLayer;
+            foreach (Neuron currentLayerNeuron in InputLayer.Neurons)
+            {
+                currentLayerNeuron.ComputeOutput();
+            }
 
             foreach (HiddenLayer hiddenLayer in HiddenLayers)
             {
@@ -176,14 +160,10 @@ namespace SimpleMLP.MLP
                 {
                     currentLayerNeuron.ComputeOutput();
                 }
-
-                previousLayer = hiddenLayer;
             }
 
-            //foreach (WeightedNeuron currentLayerNeuron in OutputLayer.Neurons)
-            for (int i = 0; i < OutputLayer.Neurons.Count; i++)
+            foreach (Neuron currentLayerNeuron in OutputLayer.Neurons)
             {
-                Neuron currentLayerNeuron = (Neuron)OutputLayer.Neurons[i];
                 currentLayerNeuron.ComputeOutput();
             }
         }

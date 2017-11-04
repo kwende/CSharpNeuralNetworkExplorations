@@ -33,15 +33,18 @@ namespace SimpleMLP.MLP
 
         public double ComputeOutput()
         {
-            double k = 0.0;
-            for (int c = 0; c < Dendrites.Count; c++)
+            if (Dendrites.Count > 0)
             {
-                k += Dendrites[c].UpStreamNeuron.Activation * Dendrites[c].Weight;
+                double k = 0.0;
+                for (int c = 0; c < Dendrites.Count; c++)
+                {
+                    k += Dendrites[c].UpStreamNeuron.Activation * Dendrites[c].Weight;
+                }
+
+                TotalInput = k + Bias;
+
+                Activation = Math.Sigmoid.Compute(TotalInput);
             }
-
-            TotalInput = k + Bias;
-
-            Activation = Math.Sigmoid.Compute(TotalInput);
 
             return Activation;
         }
