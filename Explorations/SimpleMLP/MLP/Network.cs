@@ -19,15 +19,6 @@ namespace SimpleMLP.MLP
             HiddenLayers = new List<HiddenLayer>();
         }
 
-        public void SerializeTo(string xmlPath)
-        {
-            XmlSerializer serializer = new XmlSerializer(typeof(Network));
-            using (FileStream fout = File.Create(xmlPath))
-            {
-                serializer.Serialize(fout, this);
-            }
-        }
-
         public static Network BuildNetwork(int inputNeuronCount, int outputNeuronCount, params int[] hiddenLayerCounts)
         {
             Math.RandomNormal rand = new Math.RandomNormal(0, 3);
@@ -70,8 +61,11 @@ namespace SimpleMLP.MLP
 
                     foreach (Dendrite dendrite in neuron.Dendrites)
                     {
+                        double changeInErrorRelativeToWeight =
+                            (delta * ((Neuron)dendrite.UpStreamNeuron).Activation); 
+
                         dendrite.Weight = dendrite.Weight -
-                            (stepSize * (delta * ((Neuron)dendrite.UpStreamNeuron).Activation));
+                            (stepSize * changeInErrorRelativeToWeight);
                     }
                 }
             }
@@ -79,7 +73,7 @@ namespace SimpleMLP.MLP
 
         public double Backpropagation(double[] expectedValues)
         {
-            double averagedOutputDelta = 0.0;
+            double totalNetworkError = 0.0;
             // Compute error for the output neurons to get the ball rolling. 
             // See https://github.com/kwende/CSharpNeuralNetworkExplorations/blob/master/Explorations/SimpleMLP/Documentation/OutputNeuronErrors.png
             for (int d = 0; d < expectedValues.Length; d++)
@@ -87,15 +81,19 @@ namespace SimpleMLP.MLP
                 Neuron outputNeuronBeingExamined = OutputLayer.Neurons[d];
                 double expectedOutput = expectedValues[d];
                 double actualOutput = outputNeuronBeingExamined.Activation;
+                double actualInput = outputNeuronBeingExamined.TotalInput; 
 
-                double delta = (Math.CostFunction.ComputeDerivative(actualOutput, expectedOutput) *
-                    Math.Sigmoid.ComputeDerivative(actualOutput));
+                double error = Math.CostFunction.Compute(expectedOutput, actualOutput);
+                totalNetworkError += error;
+
+                double changeInErrorRelativeToActivation =
+                    (Math.CostFunction.ComputeDerivative(actualOutput, expectedOutput)); 
+
+                double delta = changeInErrorRelativeToActivation *
+                    Math.Sigmoid.ComputeDerivative(actualInput);
 
                 outputNeuronBeingExamined.BatchErrors.Add(delta);
-
-                averagedOutputDelta += delta;
             }
-            averagedOutputDelta /= (expectedValues.Length * 1.0);
 
             // Compute error for each neuron in each layer moving backwards (backprop). 
             Layer nextLayer = OutputLayer;
@@ -118,8 +116,8 @@ namespace SimpleMLP.MLP
 
                         double delta = downStreamNeuron.BatchErrors.Last();
                         double weight = currentDendrite.Weight;
-
-                        errorSum += delta * weight;
+                        double error = delta * weight;
+                        errorSum += error; 
                     }
 
                     thisLayerNeuron.BatchErrors.Add(errorSum * Math.Sigmoid.ComputeDerivative(input));
@@ -128,7 +126,7 @@ namespace SimpleMLP.MLP
                 nextLayer = hiddenLayer;
             }
 
-            return averagedOutputDelta;
+            return totalNetworkError;
         }
 
         public void SetInputLayer(double[] x)
@@ -149,11 +147,6 @@ namespace SimpleMLP.MLP
 
         public void Feedforward()
         {
-            foreach (Neuron currentLayerNeuron in InputLayer.Neurons)
-            {
-                currentLayerNeuron.ComputeOutput();
-            }
-
             foreach (HiddenLayer hiddenLayer in HiddenLayers)
             {
                 foreach (Neuron currentLayerNeuron in hiddenLayer.Neurons)

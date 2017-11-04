@@ -46,7 +46,7 @@
     <Compile Include="Math\CostFunction.cs" />
     <Compile Include="Math\RandomNormal.cs" />
     <Compile Include="Math\Sigmoid.cs" />
-    <Compile Include="MLP\Exceptionx\InputAndWeightCountMismatchException.cs" />
+    <Compile Include="MLP\Exceptions\InputAndWeightCountMismatchException.cs" />
     <Compile Include="MLP\InputLayer.cs" />
     <Compile Include="MLP\HiddenLayer.cs" />
     <Compile Include="MLP\Layer.cs" />

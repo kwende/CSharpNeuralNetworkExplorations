@@ -28,13 +28,16 @@ namespace SimpleMLP.MLP
                     // back propagation
                     debugAverageOutputError += network.Backpropagation(data.Y);
                 }
-                Console.WriteLine($"Iteration {iterationCount}, network error: {debugAverageOutputError / (trainingDataLength * 1.0)}");
+                if(iterationCount % 100 == 0)
+                {
+                    Console.WriteLine($"Iteration {iterationCount}, network error: {debugAverageOutputError / (trainingDataLength * 1.0)}");
+                }
 
                 // update the network. 
                 network.UpdateNetwork(stepSize);
 
-                Console.WriteLine($"\t0: {network.Execute(new double[1] { 0 })[0]}");
-                Console.WriteLine($"\t1: {network.Execute(new double[1] { 1 })[0]}");
+                //Console.WriteLine($"\t0: {network.Execute(new double[1] { 0 })[0]}");
+                //Console.WriteLine($"\t1: {network.Execute(new double[1] { 1 })[0]}");
             }
         }
     }

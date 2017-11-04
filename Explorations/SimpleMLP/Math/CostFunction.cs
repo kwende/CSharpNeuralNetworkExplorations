@@ -9,15 +9,15 @@ namespace SimpleMLP.Math
 {
     public static class CostFunction
     {
-        public static double Compute(double x, double y)
+        public static double Compute(double target, double output)
         {
-            double diff = y - x;
+            double diff = output - target;
             return (1 / 2.0) * Pow(diff, 2);
         }
 
-        public static double ComputeDerivative(double x, double y)
+        public static double ComputeDerivative(double target, double output)
         {
-            return x - y;
+            return target - output;
         }
     }
 }
