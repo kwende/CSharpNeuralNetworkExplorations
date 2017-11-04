@@ -54,23 +54,6 @@ namespace SimpleMLP
 
             Network network = Network.BuildNetwork(2, 1, 5, 10, 15);
 
-            // hackery for testing. 
-            //network.HiddenLayers[0].Neurons[0].Dendrites[0].Weight = .15;
-            //network.HiddenLayers[0].Neurons[0].Dendrites[1].Weight = .2;
-            //network.HiddenLayers[0].Neurons[1].Dendrites[0].Weight = .25;
-            //network.HiddenLayers[0].Neurons[1].Dendrites[1].Weight = .30;
-
-            //network.HiddenLayers[0].Neurons[0].Bias = .35;
-            //network.HiddenLayers[0].Neurons[1].Bias = .35;
-
-            //network.OutputLayer.Neurons[0].Dendrites[0].Weight = .4;
-            //network.OutputLayer.Neurons[0].Dendrites[1].Weight = .45;
-            //network.OutputLayer.Neurons[1].Dendrites[0].Weight = .50;
-            //network.OutputLayer.Neurons[1].Dendrites[1].Weight = .55;
-
-            //network.OutputLayer.Neurons[0].Bias = .6;
-            //network.OutputLayer.Neurons[1].Bias = .6;
-
             NetworkInDGML dgmlRepresentation = NetworkInDGML.Create(network);
             dgmlRepresentation.Serialize("networkTopology.dgml");
 
