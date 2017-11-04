@@ -8,11 +8,11 @@ namespace SimpleMLP.MLP
 {
     public class NetworkTrainer
     {
-        public void Train(Network network, List<TrainingData> trainingData)
+        public void Train(Network network, List<TrainingData> trainingData, double stepSize, int numberOfIterations)
         {
             int trainingDataLength = trainingData.Count;
 
-            for (int iterationCount = 0; iterationCount < 100; iterationCount++)
+            for (int iterationCount = 0; iterationCount < numberOfIterations; iterationCount++)
             {
                 double debugAverageOutputError = 0.0;
                 // iterate over each instance of the training data. 
@@ -31,7 +31,7 @@ namespace SimpleMLP.MLP
                 //Console.WriteLine($"Average network error: {averageOutputError / (trainingDataLength * 1.0)}");
 
                 // update the network. 
-                network.UpdateNetwork(1.0);
+                network.UpdateNetwork(stepSize);
             }
         }
     }

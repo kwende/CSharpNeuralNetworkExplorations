@@ -46,7 +46,7 @@ namespace SimpleMLP
             // What I cannot create, I do not understand. 
             // ~Richard P. Feynman
 
-            Network network = Network.BuildNetwork(2, 1, 5, 15);
+            Network network = Network.BuildNetwork(2, 1, 2, 3);
 
             NetworkInDGML dgmlRepresentation = NetworkInDGML.Create(network);
             dgmlRepresentation.Serialize("networkTopology.dgml");
@@ -54,7 +54,7 @@ namespace SimpleMLP
             List<TrainingData> trainingData = BuildXORTrainingData();
 
             NetworkTrainer networkTrainer = new NetworkTrainer();
-            networkTrainer.Train(network, trainingData);
+            networkTrainer.Train(network, trainingData, .01, 1000);
 
             foreach (TrainingData data in trainingData)
             {
@@ -62,8 +62,6 @@ namespace SimpleMLP
 
                 Console.WriteLine($"Output: {actualOutput[0]}, Expected Output: {data.Y[0]}");
             }
-
-            Console.ReadLine();
 
             return;
         }

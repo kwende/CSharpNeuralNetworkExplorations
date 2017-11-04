@@ -21,7 +21,7 @@ namespace SimpleMLP.MLP
         public List<Dendrite> Dendrites { get; set; }
         public List<double> Inputs { get; set; }
         public double TotalInput { get; set; }
-        public double Output { get; set; }
+        public double Activation { get; set; }
         public List<double> BatchErrors { get; set; }
         public string UniqueName { get; private set; }
 
@@ -48,11 +48,11 @@ namespace SimpleMLP.MLP
 
             TotalInput = k + Bias;
 
-            Output = Math.Sigmoid.Compute(TotalInput);
+            Activation = Math.Sigmoid.Compute(TotalInput);
 
             Inputs.Clear();
 
-            return Output;
+            return Activation;
         }
 
         public static Neuron BuildNeuron(Math.RandomNormal rand, Layer previousLayer)
