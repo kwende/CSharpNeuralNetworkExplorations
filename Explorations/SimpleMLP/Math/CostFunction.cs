@@ -17,7 +17,7 @@ namespace SimpleMLP.Math
 
         public static double ComputeDerivative(double x, double y)
         {
-            return y - x;
+            return x - y;
         }
     }
 }

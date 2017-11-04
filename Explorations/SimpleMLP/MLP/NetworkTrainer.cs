@@ -28,7 +28,7 @@ namespace SimpleMLP.MLP
                     // back propagation
                     debugAverageOutputError += network.Backpropagation(data.Y);
                 }
-                //Console.WriteLine($"Average network error: {averageOutputError / (trainingDataLength * 1.0)}");
+                Console.WriteLine($"Iteration {iterationCount}, network error: {debugAverageOutputError / (trainingDataLength * 1.0)}");
 
                 // update the network. 
                 network.UpdateNetwork(stepSize);

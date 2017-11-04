@@ -16,26 +16,14 @@ namespace SimpleMLP
 
             trainingData.Add(new TrainingData
             {
-                X = new double[2] { 0, 0 },
+                X = new double[1] { 0},
                 Y = new double[1] { 0 }
             });
 
             trainingData.Add(new TrainingData
             {
-                X = new double[2] { 1, 0 },
+                X = new double[1] { 1},
                 Y = new double[1] { 1 }
-            });
-
-            trainingData.Add(new TrainingData
-            {
-                X = new double[2] { 0, 1 },
-                Y = new double[1] { 1 }
-            });
-
-            trainingData.Add(new TrainingData
-            {
-                X = new double[2] { 1, 1 },
-                Y = new double[1] { 0 }
             });
 
             return trainingData;
@@ -46,7 +34,7 @@ namespace SimpleMLP
             // What I cannot create, I do not understand. 
             // ~Richard P. Feynman
 
-            Network network = Network.BuildNetwork(2, 1, 2, 3);
+            Network network = Network.BuildNetwork(1, 1, 1);
 
             NetworkInDGML dgmlRepresentation = NetworkInDGML.Create(network);
             dgmlRepresentation.Serialize("networkTopology.dgml");
@@ -54,7 +42,7 @@ namespace SimpleMLP
             List<TrainingData> trainingData = BuildXORTrainingData();
 
             NetworkTrainer networkTrainer = new NetworkTrainer();
-            networkTrainer.Train(network, trainingData, .01, 1000);
+            networkTrainer.Train(network, trainingData, .1, 2000);
 
             foreach (TrainingData data in trainingData)
             {

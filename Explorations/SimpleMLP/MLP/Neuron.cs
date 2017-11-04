@@ -19,7 +19,6 @@ namespace SimpleMLP.MLP
 
         public double Bias { get; set; }
         public List<Dendrite> Dendrites { get; set; }
-        public List<double> Inputs { get; set; }
         public double TotalInput { get; set; }
         public double Activation { get; set; }
         public List<double> BatchErrors { get; set; }
@@ -28,29 +27,21 @@ namespace SimpleMLP.MLP
         private Neuron()
         {
             Dendrites = new List<Dendrite>();
-            Inputs = new List<double>();
             BatchErrors = new List<double>();
             UniqueName = GetNextUniqueId().ToString();
         }
 
         public double ComputeOutput()
         {
-            if (Inputs.Count != Dendrites.Count)
-            {
-                throw new InputAndWeightCountMismatchException();
-            }
-
             double k = 0.0;
-            for (int c = 0; c < Inputs.Count; c++)
+            for (int c = 0; c < Dendrites.Count; c++)
             {
-                k += Inputs[c] * Dendrites[c].Weight;
+                k += Dendrites[c].UpStreamNeuron.Activation * Dendrites[c].Weight;
             }
 
             TotalInput = k + Bias;
 
             Activation = Math.Sigmoid.Compute(TotalInput);
-
-            Inputs.Clear();
 
             return Activation;
         }

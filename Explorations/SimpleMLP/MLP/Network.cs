@@ -66,7 +66,8 @@ namespace SimpleMLP.MLP
 
                     foreach (Dendrite dendrite in neuron.Dendrites)
                     {
-                        dendrite.Weight = dendrite.Weight - stepSize * (delta * ((Neuron)dendrite.UpStreamNeuron).Activation);
+                        dendrite.Weight = dendrite.Weight - 
+                            (stepSize * (delta * ((Neuron)dendrite.UpStreamNeuron).Activation));
                     }
                 }
             }
@@ -103,7 +104,9 @@ namespace SimpleMLP.MLP
                     double input = thisLayerNeuron.TotalInput;
 
                     double errorSum = 0.0;
-                    List<Dendrite> downStreamDendrites = nextLayer.Neurons.SelectMany(n => n.Dendrites.Where(l => l.UpStreamNeuron == thisLayerNeuron)).ToList();
+                    List<Dendrite> downStreamDendrites = nextLayer.Neurons.SelectMany(
+                        n => n.Dendrites.Where(l => l.UpStreamNeuron == thisLayerNeuron)).ToList();
+
                     for (int f = 0; f < downStreamDendrites.Count; f++)
                     {
                         Dendrite currentDendrite = downStreamDendrites[f];
@@ -171,11 +174,6 @@ namespace SimpleMLP.MLP
             {
                 foreach (Neuron currentLayerNeuron in hiddenLayer.Neurons)
                 {
-                    foreach (Neuron previousLayerNeuron in previousLayer.Neurons)
-                    {
-                        currentLayerNeuron.Inputs.Add(previousLayerNeuron.Activation);
-                    }
-
                     currentLayerNeuron.ComputeOutput();
                 }
 
@@ -186,12 +184,6 @@ namespace SimpleMLP.MLP
             for (int i = 0; i < OutputLayer.Neurons.Count; i++)
             {
                 Neuron currentLayerNeuron = (Neuron)OutputLayer.Neurons[i];
-
-                foreach (Neuron previousLayerNeuron in previousLayer.Neurons)
-                {
-                    currentLayerNeuron.Inputs.Add(previousLayerNeuron.Activation);
-                }
-
                 currentLayerNeuron.ComputeOutput();
             }
         }
