@@ -9,66 +9,71 @@ namespace QuadraticVersusCrossEntropy
 {
     class Program
     {
-        static void SingleNeuronQuadratic(
-            double initialWeight, double initialBias, int numberOfIterations, double stepSize, string outputFile)
+        static double[] SingleNeuronQuadratic(
+            double initialWeight, double initialBias, int numberOfIterations, double stepSize)
         {
             double bias = initialBias;
             double weight = initialWeight;
 
-            using (StreamWriter sw = File.CreateText(outputFile))
+            double[] ret = new double[numberOfIterations];
+            double input = 1;
+            for (int c = 0; c < numberOfIterations; c++)
             {
-                double input = 1;
-                for (int c = 0; c < numberOfIterations; c++)
-                {
-                    double result = weight * input + bias;
-                    double activation = Math.Sigmoid.Compute(result);
+                double result = weight * input + bias;
+                double activation = Math.Sigmoid.Compute(result);
 
-                    double delta = Math.MeanSquaredErrorCostFunction.ComputeDerivativeWRTActivation(activation, 0.0) *
-                        Math.Sigmoid.ComputeDerivative(result);
+                double delta = Math.MeanSquaredErrorCostFunction.ComputeDerivativeWRTActivation(activation, 0.0) *
+                    Math.Sigmoid.ComputeDerivative(result);
 
-                    bias = bias - stepSize * delta;
-                    weight = weight - stepSize * (delta * input);
+                bias = bias - stepSize * delta;
+                weight = weight - stepSize * (delta * input);
 
-                    input = activation;
-
-                    sw.WriteLine(activation);
-                    Console.WriteLine(activation);
-                }
+                input = activation;
+                ret[c] = activation;
             }
+
+            return ret;
         }
 
-        static void SingleNeuronCrossEntropy(
-            double initialWeight, double initialBias, int numberOfIterations, double stepSize, string outputFile)
+        static double[] SingleNeuronCrossEntropy(
+            double initialWeight, double initialBias, int numberOfIterations, double stepSize)
         {
             double bias = initialBias;
             double weight = initialWeight;
 
-            using (StreamWriter sw = File.CreateText(outputFile))
+            double[] ret = new double[numberOfIterations];
+            double input = 1;
+            for (int c = 0; c < numberOfIterations; c++)
             {
-                double input = 1;
-                for (int c = 0; c < numberOfIterations; c++)
-                {
-                    double result = weight * input + bias;
-                    double activation = Math.Sigmoid.Compute(result);
+                double result = weight * input + bias;
+                double activation = Math.Sigmoid.Compute(result);
 
-                    double delta = Math.CrossEntropyCostFunction.ComputeDerivativeWRTActivation(activation, 0.0) *
-                        Math.Sigmoid.ComputeDerivative(result);
+                double delta = Math.CrossEntropyCostFunction.ComputeDerivativeWRTActivation(activation, 0.0) *
+                    Math.Sigmoid.ComputeDerivative(result);
 
-                    bias = bias - stepSize * delta;
-                    weight = weight - stepSize * (delta * input);
+                bias = bias - stepSize * delta;
+                weight = weight - stepSize * (delta * input);
 
-                    input = activation;
-
-                    sw.WriteLine(activation);
-                    Console.WriteLine(activation);
-                }
+                input = activation;
+                ret[c] = activation;
             }
+
+            return ret;
         }
 
         static void Main(string[] args)
         {
-            SingleNeuronQuadratic(2.0, 2.0, 1000, .5, "quadratic_cost_bad.csv");
-            SingleNeuronCrossEntropy(2.0, 2.0, 1000, .5, "cross_entropy_good.csv");
+            double[] quadratic = SingleNeuronQuadratic(2.0, 2.0, 1000, .5);
+            double[] crossEntropy = SingleNeuronCrossEntropy(2.0, 2.0, 1000, .5);
+
+            using (StreamWriter sw = File.CreateText("comparison.csv"))
+            {
+                sw.WriteLine("Quadratic Cost, Cross Entropy Cost");
+                for (int c = 0; c < quadratic.Length; c++)
+                {
+                    sw.WriteLine($"{quadratic[c]},{crossEntropy[c]}"); 
+                }
+            }
         }
     }
 }
