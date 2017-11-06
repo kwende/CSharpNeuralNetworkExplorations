@@ -7,7 +7,7 @@ using static System.Math;
 
 namespace Math
 {
-    public static class CostFunction
+    public static class MeanSquaredErrorCostFunction
     {
         public static double Compute(double target, double output)
         {
@@ -15,7 +15,7 @@ namespace Math
             return (1 / 2.0) * Pow(diff, 2);
         }
 
-        public static double ComputeDerivative(double output, double target)
+        public static double ComputeDerivativeWRTActivation(double output, double target)
         {
             return output - target;
         }

@@ -23,7 +23,7 @@ namespace QuadraticVersusCrossEntropy
                     double result = weight * input + bias;
                     double activation = Math.Sigmoid.Compute(result);
 
-                    double delta = Math.CostFunction.ComputeDerivative(activation, 0.0) *
+                    double delta = Math.MeanSquaredErrorCostFunction.ComputeDerivativeWRTActivation(activation, 0.0) *
                         Math.Sigmoid.ComputeDerivative(result);
 
                     bias = bias - stepSize * delta;
@@ -32,7 +32,35 @@ namespace QuadraticVersusCrossEntropy
                     input = activation;
 
                     sw.WriteLine(activation);
-                    Console.WriteLine(activation); 
+                    Console.WriteLine(activation);
+                }
+            }
+        }
+
+        static void SingleNeuronCrossEntropy(
+            double initialWeight, double initialBias, int numberOfIterations, double stepSize, string outputFile)
+        {
+            double bias = initialBias;
+            double weight = initialWeight;
+
+            using (StreamWriter sw = File.CreateText(outputFile))
+            {
+                double input = 1;
+                for (int c = 0; c < numberOfIterations; c++)
+                {
+                    double result = weight * input + bias;
+                    double activation = Math.Sigmoid.Compute(result);
+
+                    double delta = Math.CrossEntropyCostFunction.ComputeDerivativeWRTActivation(activation, 0.0) *
+                        Math.Sigmoid.ComputeDerivative(result);
+
+                    bias = bias - stepSize * delta;
+                    weight = weight - stepSize * (delta * input);
+
+                    input = activation;
+
+                    sw.WriteLine(activation);
+                    Console.WriteLine(activation);
                 }
             }
         }
@@ -41,6 +69,9 @@ namespace QuadraticVersusCrossEntropy
         {
             SingleNeuronQuadratic(.6, .9, 1000, .5, "quadratic_cost_decent.csv");
             SingleNeuronQuadratic(2.0, 2.0, 1000, .5, "quadratic_cost_bad.csv");
+
+            SingleNeuronCrossEntropy(.6, .9, 1000, .5, "cross_entropy_decent.csv");
+            SingleNeuronCrossEntropy(2.0, 2.0, 1000, .5, "cross_entropy_bad.csv");
         }
     }
 }
