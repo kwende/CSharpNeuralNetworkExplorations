@@ -10,12 +10,12 @@ namespace QuadraticVersusCrossEntropy
     class Program
     {
         static void SingleNeuronQuadratic(
-            double initialWeight, double initialBias, int numberOfIterations, double stepSize)
+            double initialWeight, double initialBias, int numberOfIterations, double stepSize, string outputFile)
         {
             double bias = initialBias;
             double weight = initialWeight;
 
-            using (StreamWriter sw = File.CreateText("quadraticCost.csv"))
+            using (StreamWriter sw = File.CreateText(outputFile))
             {
                 double input = 1;
                 for (int c = 0; c < numberOfIterations; c++)
@@ -39,7 +39,8 @@ namespace QuadraticVersusCrossEntropy
 
         static void Main(string[] args)
         {
-            SingleNeuronQuadratic(.6, .9, 100000, .5);
+            SingleNeuronQuadratic(.6, .9, 1000, .5, "quadratic_cost_decent.csv");
+            SingleNeuronQuadratic(2.0, 2.0, 1000, .5, "quadratic_cost_bad.csv");
         }
     }
 }
