@@ -4,10 +4,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{A721A605-63F0-42B1-8E13-C860E2EF0C4C}</ProjectGuid>
+    <ProjectGuid>{9FCCB6CD-3EBB-4E2D-948E-6AEF831A2553}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>SimpleMLP</RootNamespace>
-    <AssemblyName>SimpleMLP</AssemblyName>
+    <RootNamespace>QuadraticVersusCrossEntropy</RootNamespace>
+    <AssemblyName>QuadraticVersusCrossEntropy</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -42,17 +42,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Documentation\NetworkInDGML.cs" />
-    <Compile Include="MLP\Exceptions\InputAndWeightCountMismatchException.cs" />
-    <Compile Include="MLP\InputLayer.cs" />
-    <Compile Include="MLP\HiddenLayer.cs" />
-    <Compile Include="MLP\Layer.cs" />
-    <Compile Include="MLP\Network.cs" />
-    <Compile Include="MLP\NetworkTrainer.cs" />
-    <Compile Include="MLP\TrainingData.cs" />
-    <Compile Include="MLP\Neuron.cs" />
-    <Compile Include="MLP\OutputLayer.cs" />
-    <Compile Include="MLP\Dendrite.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -64,9 +53,6 @@
       <Project>{3ddb727e-a5bb-4565-9cbc-1d0d4a2842ac}</Project>
       <Name>Math</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Documentation\OutputNeuronErrors.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

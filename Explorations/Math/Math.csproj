@@ -4,16 +4,15 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{A721A605-63F0-42B1-8E13-C860E2EF0C4C}</ProjectGuid>
-    <OutputType>Exe</OutputType>
-    <RootNamespace>SimpleMLP</RootNamespace>
-    <AssemblyName>SimpleMLP</AssemblyName>
+    <ProjectGuid>{3DDB727E-A5BB-4565-9CBC-1D0D4A2842AC}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Math</RootNamespace>
+    <AssemblyName>Math</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -23,7 +22,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -42,31 +40,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Documentation\NetworkInDGML.cs" />
-    <Compile Include="MLP\Exceptions\InputAndWeightCountMismatchException.cs" />
-    <Compile Include="MLP\InputLayer.cs" />
-    <Compile Include="MLP\HiddenLayer.cs" />
-    <Compile Include="MLP\Layer.cs" />
-    <Compile Include="MLP\Network.cs" />
-    <Compile Include="MLP\NetworkTrainer.cs" />
-    <Compile Include="MLP\TrainingData.cs" />
-    <Compile Include="MLP\Neuron.cs" />
-    <Compile Include="MLP\OutputLayer.cs" />
-    <Compile Include="MLP\Dendrite.cs" />
-    <Compile Include="Program.cs" />
+    <Compile Include="RandomNormal.cs" />
+    <Compile Include="CostFunction.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Math\Math.csproj">
-      <Project>{3ddb727e-a5bb-4565-9cbc-1d0d4a2842ac}</Project>
-      <Name>Math</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Documentation\OutputNeuronErrors.png" />
+    <Compile Include="Sigmoid.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

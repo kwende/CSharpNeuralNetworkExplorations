@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using static System.Math;
 
-namespace SimpleMLP.Math
+namespace Math
 {
     public static class CostFunction
     {
@@ -15,9 +15,9 @@ namespace SimpleMLP.Math
             return (1 / 2.0) * Pow(diff, 2);
         }
 
-        public static double ComputeDerivative(double target, double output)
+        public static double ComputeDerivative(double output, double target)
         {
-            return target - output;
+            return output - target;
         }
     }
 }
