@@ -67,11 +67,8 @@ namespace QuadraticVersusCrossEntropy
 
         static void Main(string[] args)
         {
-            SingleNeuronQuadratic(.6, .9, 1000, .5, "quadratic_cost_decent.csv");
             SingleNeuronQuadratic(2.0, 2.0, 1000, .5, "quadratic_cost_bad.csv");
-
-            SingleNeuronCrossEntropy(.6, .9, 1000, .5, "cross_entropy_decent.csv");
-            SingleNeuronCrossEntropy(2.0, 2.0, 1000, .5, "cross_entropy_bad.csv");
+            SingleNeuronCrossEntropy(2.0, 2.0, 1000, .5, "cross_entropy_good.csv");
         }
     }
 }
