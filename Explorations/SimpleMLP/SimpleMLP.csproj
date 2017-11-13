@@ -43,6 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Documentation\NetworkInDGML.cs" />
+    <Compile Include="MLP\Batch.cs" />
     <Compile Include="MLP\Exceptions\InputAndWeightCountMismatchException.cs" />
     <Compile Include="MLP\InputLayer.cs" />
     <Compile Include="MLP\HiddenLayer.cs" />

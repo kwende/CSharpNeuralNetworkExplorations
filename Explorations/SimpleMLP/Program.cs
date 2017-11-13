@@ -61,7 +61,7 @@ namespace SimpleMLP
             List<TrainingData> trainingData = BuildTrainingData();
 
             NetworkTrainer networkTrainer = new NetworkTrainer();
-            networkTrainer.Train(network, trainingData, .5, 1000);
+            networkTrainer.Train(network, trainingData, .5, 1000, 100);
 
             using (FileStream fout = File.Create("serialized_meanSquaredError.dat"))
             {
