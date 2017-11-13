@@ -30,7 +30,7 @@ namespace SimpleMLP.MLP
                         // back propagation
                         debugAverageOutputError += network.Backpropagation(data.Y);
                     }
-                    if(iterationCount % 1000 == 0)
+                    if(iterationCount % 5 == 0)
                     {
                         //fout.WriteLine(debugAverageOutputError / (trainingDataLength * 1.0)); 
                         Console.WriteLine($"Iteration {iterationCount}, network error: {debugAverageOutputError / (trainingDataLength * 1.0)}");

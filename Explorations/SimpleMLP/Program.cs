@@ -12,39 +12,38 @@ namespace SimpleMLP
     {
         static List<TrainingData> BuildTrainingData()
         {
-            List<TrainingData> trainingData = new List<TrainingData>();
+            List<TrainingData> ret = new List<TrainingData>();
 
-            //trainingData.Add(new TrainingData
-            //{
-            //    X = new double[2] { .05, .1 },
-            //    Y = new double[2] { .01, .99 }
-            //});
+            List<MNIST.DigitImage> images = MNIST.Reader.Read(
+                "train-labels.idx1-ubyte",
+                "train-images.idx3-ubyte");
 
-            trainingData.Add(new TrainingData
+            foreach (MNIST.DigitImage image in images)
             {
-                X = new double[2] { 0, 0 },
-                Y = new double[1] { 0 }
-            });
+                int height = image.pixels.Length;
+                int width = image.pixels[0].Length;
 
-            trainingData.Add(new TrainingData
-            {
-                X = new double[2] { 1, 1 },
-                Y = new double[1] { 0 }
-            });
+                double[] imagePixels = new double[width * height];
 
-            trainingData.Add(new TrainingData
-            {
-                X = new double[2] { 1, 0 },
-                Y = new double[1] { 1 }
-            });
+                for (int y = 0, i = 0; y < height; y++)
+                {
+                    for (int x = 0; x < width; x++, i++)
+                    {
+                        imagePixels[i] = image.pixels[x][y];
+                    }
+                }
 
-            trainingData.Add(new TrainingData
-            {
-                X = new double[2] { 0, 1 },
-                Y = new double[1] { 1 }
-            });
+                double[] label = new double[10];
+                label[image.label] = 1;
 
-            return trainingData;
+                ret.Add(new TrainingData
+                {
+                    X = imagePixels,
+                    Y = label,
+                });
+            }
+
+            return ret;
         }
 
         static void Main(string[] args)
@@ -52,10 +51,10 @@ namespace SimpleMLP
             // What I cannot create, I do not understand. 
             // ~Richard P. Feynman
 
-            Network network = Network.BuildNetwork(2, 1, 5, 10, 15);
+            Network network = Network.BuildNetwork(784, 10, 15);
 
-            NetworkInDGML dgmlRepresentation = NetworkInDGML.Create(network);
-            dgmlRepresentation.Serialize("networkTopology.dgml");
+            //NetworkInDGML dgmlRepresentation = NetworkInDGML.Create(network);
+            //dgmlRepresentation.Serialize("networkTopology.dgml");
 
             List<TrainingData> trainingData = BuildTrainingData();
 

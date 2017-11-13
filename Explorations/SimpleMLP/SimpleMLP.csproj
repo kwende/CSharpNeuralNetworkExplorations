@@ -13,7 +13,7 @@
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <PlatformTarget>x64</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -23,7 +23,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <PlatformTarget>x64</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -64,9 +64,16 @@
       <Project>{3ddb727e-a5bb-4565-9cbc-1d0d4a2842ac}</Project>
       <Name>Math</Name>
     </ProjectReference>
+    <ProjectReference Include="..\MNISTReader\MNIST.csproj">
+      <Project>{75e1894f-9cd3-4f1a-8ecc-185235eafe24}</Project>
+      <Name>MNIST</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Documentation\OutputNeuronErrors.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>c:\windows\system32\xcopy "$(SolutionDir)Data\MNIST\*" /E /I /H /Y /D</PreBuildEvent>
+  </PropertyGroup>
 </Project>

@@ -83,11 +83,11 @@ namespace SimpleMLP.MLP
                 double actualOutput = outputNeuronBeingExamined.Activation;
                 double actualInput = outputNeuronBeingExamined.TotalInput; 
 
-                double error = Math.CostFunction.Compute(expectedOutput, actualOutput);
+                double error = Math.MeanSquaredErrorCostFunction.Compute(expectedOutput, actualOutput);
                 totalNetworkError += error;
 
                 double changeInErrorRelativeToActivation =
-                    (Math.CostFunction.ComputeDerivative(actualOutput, expectedOutput)); 
+                    (Math.MeanSquaredErrorCostFunction.ComputeDerivativeWRTActivation(actualOutput, expectedOutput)); 
 
                 double delta = changeInErrorRelativeToActivation *
                     Math.Sigmoid.ComputeDerivative(actualInput);
