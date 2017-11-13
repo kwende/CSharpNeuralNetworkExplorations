@@ -44,5 +44,39 @@ namespace SimpleMLP.MLP
                 network.UpdateNetwork(stepSize);
             }
         }
+
+        public double Test(Network network, List<TrainingData> testingData)
+        {
+            int numberCorrect = 0;
+            foreach (TrainingData testData in testingData)
+            {
+                double[] outputs = network.Execute(testData.X);
+
+                int outputClassification = ArgMax(outputs);
+                int expectedClassification = ArgMax(testData.Y);
+
+                if (outputClassification == expectedClassification)
+                {
+                    numberCorrect++;
+                }
+            }
+
+            return numberCorrect / (testingData.Count * 1.0);
+        }
+
+        private int ArgMax(double[] y)
+        {
+            double maxValue = 0;
+            int maxIndex = -1;
+            for (int c = 0; c < y.Length; c++)
+            {
+                if (y[c] > maxValue)
+                {
+                    maxValue = y[c];
+                    maxIndex = c;
+                }
+            }
+            return maxIndex;
+        }
     }
 }

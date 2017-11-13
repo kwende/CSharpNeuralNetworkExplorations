@@ -12,13 +12,11 @@ namespace SimpleMLP
 {
     class Program
     {
-        static List<TrainingData> BuildTrainingData()
+        static List<TrainingData> BuildTrainingDataFromMNIST(string labelsFile, string imagesFile)
         {
             List<TrainingData> ret = new List<TrainingData>();
 
-            List<MNIST.DigitImage> images = MNIST.Reader.Read(
-                "train-labels.idx1-ubyte",
-                "train-images.idx3-ubyte");
+            List<MNIST.DigitImage> images = MNIST.Reader.Read(labelsFile, imagesFile);
 
             foreach (MNIST.DigitImage image in images)
             {
@@ -58,16 +56,20 @@ namespace SimpleMLP
             //NetworkInDGML dgmlRepresentation = NetworkInDGML.Create(network);
             //dgmlRepresentation.Serialize("networkTopology.dgml");
 
-            List<TrainingData> trainingData = BuildTrainingData();
+            List<TrainingData> trainingData = BuildTrainingDataFromMNIST("train-labels.idx1-ubyte", "train-images.idx3-ubyte");
 
             NetworkTrainer networkTrainer = new NetworkTrainer();
-            networkTrainer.Train(network, trainingData, .5, 1000, 100);
+            networkTrainer.Train(network, trainingData, .5, 30, 5000);
 
             using (FileStream fout = File.Create("serialized_meanSquaredError.dat"))
             {
                 BinaryFormatter bf = new BinaryFormatter();
                 bf.Serialize(fout, network);
             }
+
+            List<TrainingData> testData = BuildTrainingDataFromMNIST("t10k-labels.idx1-ubyte", "t10k-images.idx3-ubyte");
+
+            Console.WriteLine($"Accurancy: {(networkTrainer.Test(network, testData) * 100.0).ToString("000.00")}%");
 
             return;
         }
