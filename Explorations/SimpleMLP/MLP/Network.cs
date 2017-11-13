@@ -8,6 +8,7 @@ using System.Xml.Serialization;
 
 namespace SimpleMLP.MLP
 {
+    [Serializable]
     public class Network
     {
         public InputLayer InputLayer { get; set; }

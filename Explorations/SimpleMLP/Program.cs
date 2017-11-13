@@ -2,7 +2,9 @@
 using SimpleMLP.MLP;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -59,13 +61,12 @@ namespace SimpleMLP
             List<TrainingData> trainingData = BuildTrainingData();
 
             NetworkTrainer networkTrainer = new NetworkTrainer();
-            networkTrainer.Train(network, trainingData, .5, 1000000);
+            networkTrainer.Train(network, trainingData, .5, 1);
 
-            foreach (TrainingData data in trainingData)
+            using (FileStream fout = File.Create("serialized.dat"))
             {
-                double[] actualOutput = network.Execute(data.X);
-
-                Console.WriteLine($"Output: {actualOutput[0]}, Expected Output: {data.Y[0]}");
+                BinaryFormatter bf = new BinaryFormatter();
+                bf.Serialize(fout, network);
             }
 
             return;

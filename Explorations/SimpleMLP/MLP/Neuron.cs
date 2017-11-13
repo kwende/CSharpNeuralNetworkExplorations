@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace SimpleMLP.MLP
 {
+    [Serializable]
     public class Neuron
     {
         private static int _uniqueId = 0;

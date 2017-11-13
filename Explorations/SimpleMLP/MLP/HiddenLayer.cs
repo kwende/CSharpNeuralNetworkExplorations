@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace SimpleMLP.MLP
 {
+    [Serializable]
     public class HiddenLayer : Layer
     {
         private HiddenLayer() : base()

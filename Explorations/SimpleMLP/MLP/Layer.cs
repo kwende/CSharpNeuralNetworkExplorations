@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace SimpleMLP.MLP
 {
+    [Serializable]
     public abstract class Layer
     {
         public List<Neuron> Neurons { get; set; }

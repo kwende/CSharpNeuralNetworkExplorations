@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace SimpleMLP.MLP
 {
+    [Serializable]
     public class InputLayer : Layer
     {
         private InputLayer() : base()
