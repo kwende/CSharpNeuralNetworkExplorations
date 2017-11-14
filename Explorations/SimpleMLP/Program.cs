@@ -91,7 +91,7 @@ namespace SimpleMLP
             List<TrainingData> trainingData = BuildTrainingDataForXOR();
 
             NetworkTrainer networkTrainer = new NetworkTrainer();
-            networkTrainer.Train(network, trainingData, .1, 100000, 1);
+            networkTrainer.Train(network, trainingData, .5, 100, 1);
 
             Console.WriteLine(string.Join(",", network.Execute(new double[2] { 0, 1 })));
             Console.WriteLine(string.Join(",", network.Execute(new double[2] { 1, 0 })));

@@ -55,10 +55,10 @@ namespace SimpleMLP.MLP
             {
                 foreach (Neuron neuron in layersToUpdate[c].Neurons)
                 {
-                    double delta = neuron.BatchErrors.Average();
+                    double delta = stepSize * neuron.BatchErrors.Average();
                     neuron.BatchErrors.Clear();
 
-                    neuron.Bias = neuron.Bias - (stepSize * delta);
+                    neuron.Bias = neuron.Bias - delta;
 
                     foreach (Dendrite dendrite in neuron.Dendrites)
                     {
@@ -66,7 +66,7 @@ namespace SimpleMLP.MLP
                             (delta * ((Neuron)dendrite.UpStreamNeuron).Activation); 
 
                         dendrite.Weight = dendrite.Weight -
-                            (stepSize * changeInErrorRelativeToWeight);
+                            (changeInErrorRelativeToWeight);
                     }
                 }
             }
