@@ -51,7 +51,7 @@ namespace SimpleMLP
             // What I cannot create, I do not understand. 
             // ~Richard P. Feynman
 
-            Network network = Network.BuildNetwork(784, 10, 15);
+            Network network = Network.BuildNetwork(784, 10, 30);
 
             //NetworkInDGML dgmlRepresentation = NetworkInDGML.Create(network);
             //dgmlRepresentation.Serialize("networkTopology.dgml");
@@ -59,7 +59,7 @@ namespace SimpleMLP
             List<TrainingData> trainingData = BuildTrainingDataFromMNIST("train-labels.idx1-ubyte", "train-images.idx3-ubyte");
 
             NetworkTrainer networkTrainer = new NetworkTrainer();
-            networkTrainer.Train(network, trainingData, .5, 30, 5000);
+            networkTrainer.Train(network, trainingData, .5, 30, 10);
 
             using (FileStream fout = File.Create("serialized_meanSquaredError.dat"))
             {
