@@ -91,12 +91,12 @@ namespace SimpleMLP
             List<TrainingData> trainingData = BuildTrainingDataForXOR();
 
             NetworkTrainer networkTrainer = new NetworkTrainer();
-            networkTrainer.Train(network, trainingData, .5, 100, 1);
+            networkTrainer.Train(network, trainingData, .5, 10000, 1);
 
-            Console.WriteLine(string.Join(",", network.Execute(new double[2] { 0, 1 })));
-            Console.WriteLine(string.Join(",", network.Execute(new double[2] { 1, 0 })));
-            Console.WriteLine(string.Join(",", network.Execute(new double[2] { 0, 0 })));
-            Console.WriteLine(string.Join(",", network.Execute(new double[2] { 1, 1 })));
+            //Console.WriteLine(string.Join(",", network.Execute(new double[2] { 0, 1 })));
+            //Console.WriteLine(string.Join(",", network.Execute(new double[2] { 1, 0 })));
+            //Console.WriteLine(string.Join(",", network.Execute(new double[2] { 0, 0 })));
+            //Console.WriteLine(string.Join(",", network.Execute(new double[2] { 1, 1 })));
 
             //using (FileStream fout = File.Create("serialized_meanSquaredError.dat"))
             //{
@@ -105,9 +105,9 @@ namespace SimpleMLP
             //}
 
             // List<TrainingData> testData = BuildTrainingDataFromMNIST("t10k-labels.idx1-ubyte", "t10k-images.idx3-ubyte");
-            //List<TrainingData> testData = BuildTrainingDataForXOR();
+            List<TrainingData> testData = BuildTrainingDataForXOR();
 
-            //Console.WriteLine($"Accurancy: {(networkTrainer.Test(network, testData) * 100.0).ToString("000.00")}%");
+            Console.WriteLine($"Accurancy: {(networkTrainer.Test(network, testData) * 100.0).ToString("000.00")}%");
 
             return;
         }
