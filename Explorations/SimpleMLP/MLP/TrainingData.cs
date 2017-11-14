@@ -10,5 +10,10 @@ namespace SimpleMLP.MLP
     {
         public double[] X { get; set; }
         public double[] Y { get; set; }
+
+        public override string ToString()
+        {
+            return string.Join(",", X) + " = " + string.Join(",", Y);
+        }
     }
 }

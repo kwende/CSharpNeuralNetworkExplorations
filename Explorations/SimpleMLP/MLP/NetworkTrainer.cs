@@ -15,12 +15,11 @@ namespace SimpleMLP.MLP
         {
             int trainingDataLength = trainingData.Count;
 
-            Random random = new Random(); 
+            Random random = new Random();
             for (int epochs = 0; epochs < numberOfEpochs; epochs++)
             {
                 Batch[] batches = Batch.CreateBatches(trainingData, batchSize, random);
 
-                Console.WriteLine($"Epoch {epochs + 1}");
                 for (int b = 0; b < batches.Length; b++)
                 {
                     Batch batch = batches[b];
@@ -39,10 +38,10 @@ namespace SimpleMLP.MLP
                         debugAverageOutputError += network.Backpropagation(data.Y);
                     };
 
-                    if (b % 100 == 0)
+                    if (epochs % 1000 == 0)
                     {
                         //fout.WriteLine(debugAverageOutputError / (trainingDataLength * 1.0)); 
-                        Console.WriteLine($"\tBatch {b}, network error: {debugAverageOutputError / (trainingDataLength * 1.0)}");
+                        Console.WriteLine($"Epoch {epochs}, Batch {b}, network error: {debugAverageOutputError / (trainingDataLength * 1.0)}");
                     }
 
                     // update the network. 

@@ -46,30 +46,68 @@ namespace SimpleMLP
             return ret;
         }
 
+        static List<TrainingData> BuildTrainingDataForXOR()
+        {
+            List<TrainingData> ret = new List<TrainingData>();
+
+            ret.Add(new TrainingData
+            {
+                X = new double[2] { 0, 1 },
+                Y = new double[1] { 1 },
+            });
+
+            ret.Add(new TrainingData
+            {
+                X = new double[2] { 1, 0 },
+                Y = new double[1] { 1 },
+            });
+
+            ret.Add(new TrainingData
+            {
+                X = new double[2] { 1, 1 },
+                Y = new double[1] { 0 },
+            });
+
+            ret.Add(new TrainingData
+            {
+                X = new double[2] { 0, 0 },
+                Y = new double[1] { 0 },
+            });
+
+            return ret;
+        }
+
         static void Main(string[] args)
         {
             // What I cannot create, I do not understand. 
             // ~Richard P. Feynman
 
-            Network network = Network.BuildNetwork(784, 10, 30);
+            Network network = Network.BuildNetwork(2, 1, 5, 15);
 
             //NetworkInDGML dgmlRepresentation = NetworkInDGML.Create(network);
             //dgmlRepresentation.Serialize("networkTopology.dgml");
 
-            List<TrainingData> trainingData = BuildTrainingDataFromMNIST("train-labels.idx1-ubyte", "train-images.idx3-ubyte");
+            //List<TrainingData> trainingData = BuildTrainingDataFromMNIST("train-labels.idx1-ubyte", "train-images.idx3-ubyte");
+            List<TrainingData> trainingData = BuildTrainingDataForXOR();
 
             NetworkTrainer networkTrainer = new NetworkTrainer();
-            networkTrainer.Train(network, trainingData, .5, 30, 10);
+            networkTrainer.Train(network, trainingData, .1, 100000, 1);
 
-            using (FileStream fout = File.Create("serialized_meanSquaredError.dat"))
-            {
-                BinaryFormatter bf = new BinaryFormatter();
-                bf.Serialize(fout, network);
-            }
+            Console.WriteLine(string.Join(",", network.Execute(new double[2] { 0, 1 })));
+            Console.WriteLine(string.Join(",", network.Execute(new double[2] { 1, 0 })));
+            Console.WriteLine(string.Join(",", network.Execute(new double[2] { 0, 0 })));
+            Console.WriteLine(string.Join(",", network.Execute(new double[2] { 1, 1 })));
 
-            List<TrainingData> testData = BuildTrainingDataFromMNIST("t10k-labels.idx1-ubyte", "t10k-images.idx3-ubyte");
+            //using (FileStream fout = File.Create("serialized_meanSquaredError.dat"))
+            //{
+            //    BinaryFormatter bf = new BinaryFormatter();
+            //    bf.Serialize(fout, network);
+            //}
 
-            Console.WriteLine($"Accurancy: {(networkTrainer.Test(network, testData) * 100.0).ToString("000.00")}%");
+            // List<TrainingData> testData = BuildTrainingDataFromMNIST("t10k-labels.idx1-ubyte", "t10k-images.idx3-ubyte");
+            //List<TrainingData> testData = BuildTrainingDataForXOR();
+
+            //Console.WriteLine($"Accurancy: {(networkTrainer.Test(network, testData) * 100.0).ToString("000.00")}%");
 
             return;
         }
