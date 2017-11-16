@@ -82,16 +82,16 @@ namespace SimpleMLP
             // What I cannot create, I do not understand. 
             // ~Richard P. Feynman
 
-            Network network = Network.BuildNetwork(2, 1, 5, 15);
-
+            Network network = Network.BuildNetwork(784, 10, 30);
+            //Network network = Network.BuildNetwork(2, 1, 5);
             //NetworkInDGML dgmlRepresentation = NetworkInDGML.Create(network);
             //dgmlRepresentation.Serialize("networkTopology.dgml");
 
-            //List<TrainingData> trainingData = BuildTrainingDataFromMNIST("train-labels.idx1-ubyte", "train-images.idx3-ubyte");
-            List<TrainingData> trainingData = BuildTrainingDataForXOR();
+            List<TrainingData> trainingData = BuildTrainingDataFromMNIST("train-labels.idx1-ubyte", "train-images.idx3-ubyte");
+            //List<TrainingData> trainingData = BuildTrainingDataForXOR();
 
             NetworkTrainer networkTrainer = new NetworkTrainer();
-            networkTrainer.Train(network, trainingData, .5, 10000, 1);
+            networkTrainer.Train(network, trainingData, .5, 30, 10);
 
             //Console.WriteLine(string.Join(",", network.Execute(new double[2] { 0, 1 })));
             //Console.WriteLine(string.Join(",", network.Execute(new double[2] { 1, 0 })));
@@ -104,8 +104,8 @@ namespace SimpleMLP
             //    bf.Serialize(fout, network);
             //}
 
-            // List<TrainingData> testData = BuildTrainingDataFromMNIST("t10k-labels.idx1-ubyte", "t10k-images.idx3-ubyte");
-            List<TrainingData> testData = BuildTrainingDataForXOR();
+            List<TrainingData> testData = BuildTrainingDataFromMNIST("t10k-labels.idx1-ubyte", "t10k-images.idx3-ubyte");
+            //List<TrainingData> testData = BuildTrainingDataForXOR();
 
             Console.WriteLine($"Accurancy: {(networkTrainer.Test(network, testData) * 100.0).ToString("000.00")}%");
 

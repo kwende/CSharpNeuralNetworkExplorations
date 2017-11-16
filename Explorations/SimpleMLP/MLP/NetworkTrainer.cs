@@ -14,6 +14,7 @@ namespace SimpleMLP.MLP
             double stepSize, int numberOfEpochs, int batchSize)
         {
             int trainingDataLength = trainingData.Count;
+            int reportCount = 0; 
 
             Random random = new Random();
             for (int epochs = 0; epochs < numberOfEpochs; epochs++)
@@ -38,11 +39,12 @@ namespace SimpleMLP.MLP
                         debugAverageOutputError += network.Backpropagation(data.Y);
                     };
 
-                    if (epochs % 1000 == 0)
+                    if (reportCount % 1000 == 0)
                     {
                         //fout.WriteLine(debugAverageOutputError / (trainingDataLength * 1.0)); 
                         Console.WriteLine($"Epoch {epochs}, Batch {b}, network error: {debugAverageOutputError / (trainingDataLength * 1.0)}");
                     }
+                    reportCount++; 
 
                     // update the network. 
                     network.UpdateNetwork(stepSize);
@@ -57,10 +59,7 @@ namespace SimpleMLP.MLP
             {
                 double[] outputs = network.Execute(testData.X);
 
-                int outputClassification = ArgMax(outputs);
-                int expectedClassification = ArgMax(testData.Y);
-
-                if (outputClassification == expectedClassification)
+                if (EquivalentOutputs(outputs, testData.Y))
                 {
                     numberCorrect++;
                 }
@@ -69,19 +68,24 @@ namespace SimpleMLP.MLP
             return numberCorrect / (testingData.Count * 1.0);
         }
 
-        private int ArgMax(double[] y)
+        private bool EquivalentOutputs(double[] y1, double[] y2)
         {
-            double maxValue = 0;
-            int maxIndex = -1;
-            for (int c = 0; c < y.Length; c++)
+            bool equal = true;
+
+            for (int c = 0; c < y1.Length; c++)
             {
-                if (y[c] > maxValue)
+                double y1Val = y1[c];
+                double y2Val = y2[c];
+
+                if ((y1Val >= .5 && y2Val < .5) ||
+                    (y1Val < .5 && y2Val >= .5))
                 {
-                    maxValue = y[c];
-                    maxIndex = c;
+                    equal = false;
+                    break;
                 }
             }
-            return maxIndex;
+
+            return equal;
         }
     }
 }

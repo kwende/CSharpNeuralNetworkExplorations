@@ -22,7 +22,7 @@ namespace SimpleMLP.MLP
 
         public static Network BuildNetwork(int inputNeuronCount, int outputNeuronCount, params int[] hiddenLayerCounts)
         {
-            Math.RandomNormal rand = new Math.RandomNormal(0, 3);
+            Math.RandomNormal rand = new Math.RandomNormal(0, 1);
 
             Network network = new Network();
 
