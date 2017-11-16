@@ -63,7 +63,7 @@ namespace SimpleMLP.MLP
                     foreach (Dendrite dendrite in neuron.Dendrites)
                     {
                         double changeInErrorRelativeToWeight =
-                            (delta * ((Neuron)dendrite.UpStreamNeuron).Activation); 
+                            (delta * ((Neuron)dendrite.UpStreamNeuron).Activation);
 
                         dendrite.Weight = dendrite.Weight -
                             (changeInErrorRelativeToWeight);
@@ -82,13 +82,13 @@ namespace SimpleMLP.MLP
                 Neuron outputNeuronBeingExamined = OutputLayer.Neurons[d];
                 double expectedOutput = expectedValues[d];
                 double actualOutput = outputNeuronBeingExamined.Activation;
-                double actualInput = outputNeuronBeingExamined.TotalInput; 
+                double actualInput = outputNeuronBeingExamined.TotalInput;
 
                 double error = Math.MeanSquaredErrorCostFunction.Compute(expectedOutput, actualOutput);
                 totalNetworkError += error;
 
                 double changeInErrorRelativeToActivation =
-                    (Math.MeanSquaredErrorCostFunction.ComputeDerivativeWRTActivation(actualOutput, expectedOutput)); 
+                    (Math.MeanSquaredErrorCostFunction.ComputeDerivativeWRTActivation(actualOutput, expectedOutput));
 
                 double delta = changeInErrorRelativeToActivation *
                     Math.Sigmoid.ComputeDerivative(actualInput);
@@ -118,7 +118,7 @@ namespace SimpleMLP.MLP
                         double delta = downStreamNeuron.BatchErrors.Last();
                         double weight = currentDendrite.Weight;
                         double error = delta * weight;
-                        errorSum += error; 
+                        errorSum += error;
                     }
 
                     thisLayerNeuron.BatchErrors.Add(errorSum * Math.Sigmoid.ComputeDerivative(input));
@@ -146,7 +146,7 @@ namespace SimpleMLP.MLP
             return OutputLayer.Neurons.Select(n => ((Neuron)n).Activation).ToArray();
         }
 
-        public void Feedforward()
+        public double[] Feedforward()
         {
             foreach (HiddenLayer hiddenLayer in HiddenLayers)
             {
@@ -156,10 +156,13 @@ namespace SimpleMLP.MLP
                 }
             }
 
+            List<double> output = new List<double>();
             foreach (Neuron currentLayerNeuron in OutputLayer.Neurons)
             {
-                currentLayerNeuron.ComputeOutput();
+                output.Add(currentLayerNeuron.ComputeOutput());
             }
+
+            return output.ToArray();
         }
     }
 }

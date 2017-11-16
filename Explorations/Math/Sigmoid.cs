@@ -11,7 +11,7 @@ namespace Math
     {
         public static double Compute(double x)
         {
-            return 1 / (1 + Exp(-x));
+            return 1.0 / (1.0 + Exp(-x));
         }
 
         public static double ComputeDerivative(double x)

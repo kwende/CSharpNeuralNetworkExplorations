@@ -2,6 +2,7 @@
 using SimpleMLP.MLP;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -12,6 +13,23 @@ namespace SimpleMLP
 {
     class Program
     {
+        static void WriteTrainingDataToDisk(TrainingData data, string outputDirectory)
+        {
+            using (Bitmap bmp = new Bitmap(data.XWidth, data.XHeight))
+            {
+                for (int y = 0, i = 0; y < data.XHeight; y++)
+                {
+                    for (int x = 0; x < data.XWidth; x++, i++)
+                    {
+                        byte v = (byte)(data.X[i] * 255);
+                        bmp.SetPixel(x, y, Color.FromArgb(v, v, v));
+                    }
+                }
+
+                bmp.Save(Path.Combine(outputDirectory, $"{data.Label}_{Guid.NewGuid().ToString().Replace("-", "")}.bmp"));
+            }
+        }
+
         static List<TrainingData> BuildTrainingDataFromMNIST(string labelsFile, string imagesFile)
         {
             List<TrainingData> ret = new List<TrainingData>();
@@ -29,17 +47,28 @@ namespace SimpleMLP
                 {
                     for (int x = 0; x < width; x++, i++)
                     {
-                        imagePixels[i] = image.pixels[x][y];
+                        imagePixels[i] = image.pixels[x][y] / 255.0;
                     }
                 }
 
-                double[] label = new double[10];
-                label[image.label] = 1;
+                double[] label = new double[1];
+
+                if (image.label % 2 == 0)
+                {
+                    label[0] = 1;
+                }
+                else
+                {
+                    label[0] = 0;
+                }
 
                 ret.Add(new TrainingData
                 {
                     X = imagePixels,
                     Y = label,
+                    XWidth = width,
+                    XHeight = height,
+                    Label = image.label,
                 });
             }
 
@@ -82,12 +111,14 @@ namespace SimpleMLP
             // What I cannot create, I do not understand. 
             // ~Richard P. Feynman
 
-            Network network = Network.BuildNetwork(784, 10, 30);
+            Network network = Network.BuildNetwork(784, 1, 30);
             //Network network = Network.BuildNetwork(2, 1, 5);
             //NetworkInDGML dgmlRepresentation = NetworkInDGML.Create(network);
             //dgmlRepresentation.Serialize("networkTopology.dgml");
 
             List<TrainingData> trainingData = BuildTrainingDataFromMNIST("train-labels.idx1-ubyte", "train-images.idx3-ubyte");
+            List<TrainingData> testData = BuildTrainingDataFromMNIST("t10k-labels.idx1-ubyte", "t10k-images.idx3-ubyte");
+
             //List<TrainingData> trainingData = BuildTrainingDataForXOR();
 
             NetworkTrainer networkTrainer = new NetworkTrainer();
@@ -104,7 +135,6 @@ namespace SimpleMLP
             //    bf.Serialize(fout, network);
             //}
 
-            List<TrainingData> testData = BuildTrainingDataFromMNIST("t10k-labels.idx1-ubyte", "t10k-images.idx3-ubyte");
             //List<TrainingData> testData = BuildTrainingDataForXOR();
 
             Console.WriteLine($"Accurancy: {(networkTrainer.Test(network, testData) * 100.0).ToString("000.00")}%");

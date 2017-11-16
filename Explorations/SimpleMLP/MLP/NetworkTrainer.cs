@@ -34,15 +34,18 @@ namespace SimpleMLP.MLP
                         // set the input to the net. 
                         network.SetInputLayer(data.X);
                         // feed forward. 
-                        network.Feedforward();
+                        double[] result = network.Feedforward();
                         // back propagation
                         debugAverageOutputError += network.Backpropagation(data.Y);
                     };
 
                     if (reportCount % 1000 == 0)
                     {
+                        double averaged = (debugAverageOutputError / (trainingDataLength * 1.0)); 
                         //fout.WriteLine(debugAverageOutputError / (trainingDataLength * 1.0)); 
-                        Console.WriteLine($"Epoch {epochs}, Batch {b}, network error: {debugAverageOutputError / (trainingDataLength * 1.0)}");
+                        Console.WriteLine($"Epoch {epochs}, Batch {b}, network error: {averaged * 1000} (scaled)");
+
+                        File.AppendAllText("C:/users/brush/desktop/averageError.csv", averaged.ToString() + "\n"); 
                     }
                     reportCount++; 
 
