@@ -135,24 +135,19 @@ namespace SimpleMLP.MLP
             return totalNetworkError;
         }
 
-        public void SetInputLayer(double[] x)
+        public double[] Execute(double[] inputs)
         {
-            // set the inputs.
+            Feedforward(inputs);
+            return OutputLayer.Neurons.Select(n => ((Neuron)n).Activation).ToArray();
+        }
+
+        public double[] Feedforward(double[] x)
+        {
             for (int d = 0; d < x.Length; d++)
             {
                 (InputLayer.Neurons[d]).Activation = x[d];
             }
-        }
 
-        public double[] Execute(double[] inputs)
-        {
-            SetInputLayer(inputs);
-            Feedforward();
-            return OutputLayer.Neurons.Select(n => ((Neuron)n).Activation).ToArray();
-        }
-
-        public double[] Feedforward()
-        {
             foreach (HiddenLayer hiddenLayer in HiddenLayers)
             {
                 foreach (Neuron currentLayerNeuron in hiddenLayer.Neurons)

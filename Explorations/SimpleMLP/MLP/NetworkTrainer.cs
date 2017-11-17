@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Common.DataStructures;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
@@ -11,60 +12,42 @@ namespace SimpleMLP.MLP
 {
     public class NetworkTrainer
     {
-        static void WriteTrainingDataToDisk(TrainingData data, string outputFile)
-        {
-            using (Bitmap bmp = new Bitmap(data.XWidth, data.XHeight))
-            {
-                for (int y = 0, i = 0; y < data.XHeight; y++)
-                {
-                    for (int x = 0; x < data.XWidth; x++, i++)
-                    {
-                        byte v = (byte)(data.X[i] * 255);
-                        bmp.SetPixel(x, y, Color.FromArgb(v, v, v));
-                    }
-                }
-
-                bmp.Save(outputFile);
-            }
-        }
-
         public void Train(Network network, List<TrainingData> trainingData,
-            double stepSize, int numberOfEpochs, int batchSize)
+            double stepSize, int numberOfEpochs, int batchSize, Action<LearningProgress> onLearningProgres)
         {
             int trainingDataLength = trainingData.Count;
-            int reportCount = 0;
 
+            int counter = 0;
             Random random = new Random();
-            for (int epochs = 0; epochs < numberOfEpochs; epochs++)
+            for (int epoch = 0; epoch < numberOfEpochs; epoch++)
             {
                 Batch[] batches = Batch.CreateBatches(trainingData, batchSize, random);
 
                 for (int b = 0; b < batches.Length; b++)
                 {
                     Batch batch = batches[b];
-                    double debugAverageOutputError = 0.0;
+                    double outputError = 0.0;
                     // iterate over each instance of the training data. 
                     for (int n = 0; n < batch.Size; n++)
                     {
                         // get an instance of training data. 
                         TrainingData data = batch.Data[n];
-
-                        // set the input to the net. 
-                        network.SetInputLayer(data.X);
                         // feed forward. 
-                        double[] result = network.Feedforward();
+                        double[] result = network.Feedforward(data.X);
                         // back propagation
-                        debugAverageOutputError += network.Backpropagation(data.Y);
+                        outputError += network.Backpropagation(data.Y);
                     };
 
-                    if (reportCount % 1000 == 0)
+                    if (onLearningProgres != null)
                     {
-                        double averaged = (debugAverageOutputError / (trainingDataLength * 1.0));
-                        //fout.WriteLine(debugAverageOutputError / (trainingDataLength * 1.0)); 
-                        Console.WriteLine($"Epoch {epochs}, Batch {b}, network error: {averaged * 1000} (scaled)");
+                        onLearningProgres(new LearningProgress
+                        {
+                            BatchNumber = b,
+                            Epoch = epoch,
+                            CurrentNetworkError = outputError,
+                            Counter = ++counter,
+                        });
                     }
-                    reportCount++;
-
                     // update the network. 
                     network.UpdateNetwork(stepSize);
                 }
@@ -77,17 +60,6 @@ namespace SimpleMLP.MLP
             foreach (TrainingData testData in testingData)
             {
                 double[] outputs = network.Execute(testData.X);
-                //int classFromOutputs = ClassFromOutputs(outputs);
-
-                //string path = Path.Combine($"C:/users/brush/desktop/images/{classFromOutputs}/{Guid.NewGuid().ToString()}.bmp");
-                //string directory = Path.GetDirectoryName(path); 
-
-                //if(!Directory.Exists(directory))
-                //{
-                //    Directory.CreateDirectory(directory); 
-                //}
-
-                //WriteTrainingDataToDisk(testData, path); 
 
                 if (EquivalentOutputs(outputs, testData.Y))
                 {
