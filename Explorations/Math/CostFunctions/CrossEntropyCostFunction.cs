@@ -1,20 +1,21 @@
-﻿using System;
+﻿using Common.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using static System.Math;
 
-namespace Math
+namespace Math.CostFunctions
 {
-    public static class CrossEntropyCostFunction
+    public class CrossEntropyCostFunction : ICostFunction
     {
-        public static double Compute(double target, double output)
+        public double Compute(double target, double output)
         {
             return (output * Log(output)) * ((1 - target) * Log(1 - output));
         }
 
-        public static double ComputeDerivativeWRTActivation(double output, double target)
+        public double ComputeDerivativeWRTActivation(double output, double target)
         {
             return (output - target) / (output * (1 - output));
         }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Common.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -15,16 +16,20 @@ namespace SimpleMLP.MLP
         public List<HiddenLayer> HiddenLayers { get; set; }
         public OutputLayer OutputLayer { get; set; }
 
-        private Network()
+        private ICostFunction _costFunction;
+
+        private Network(ICostFunction costFunction)
         {
             HiddenLayers = new List<HiddenLayer>();
+            _costFunction = costFunction;
         }
 
-        public static Network BuildNetwork(int inputNeuronCount, int outputNeuronCount, params int[] hiddenLayerCounts)
+        public static Network BuildNetwork(ICostFunction costFunction, int inputNeuronCount,
+            int outputNeuronCount, params int[] hiddenLayerCounts)
         {
             Math.RandomNormal rand = new Math.RandomNormal(0, 1);
 
-            Network network = new Network();
+            Network network = new Network(costFunction);
 
             network.InputLayer = InputLayer.BuildInputLayer(rand, inputNeuronCount);
 
@@ -84,11 +89,11 @@ namespace SimpleMLP.MLP
                 double actualOutput = outputNeuronBeingExamined.Activation;
                 double actualInput = outputNeuronBeingExamined.TotalInput;
 
-                double error = Math.MeanSquaredErrorCostFunction.Compute(expectedOutput, actualOutput);
+                double error = _costFunction.Compute(expectedOutput, actualOutput);
                 totalNetworkError += error;
 
                 double changeInErrorRelativeToActivation =
-                    (Math.MeanSquaredErrorCostFunction.ComputeDerivativeWRTActivation(actualOutput, expectedOutput));
+                    (_costFunction.ComputeDerivativeWRTActivation(actualOutput, expectedOutput));
 
                 double delta = changeInErrorRelativeToActivation *
                     Math.Sigmoid.ComputeDerivative(actualInput);

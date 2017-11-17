@@ -35,7 +35,7 @@ namespace SimpleMLP
                 }
 
                 double[] label = new double[10];
-                label[image.label] = 1; 
+                label[image.label] = 1;
 
                 ret.Add(new TrainingData
                 {
@@ -86,31 +86,17 @@ namespace SimpleMLP
             // What I cannot create, I do not understand. 
             // ~Richard P. Feynman
 
-            Network network = Network.BuildNetwork(784, 10, 30);
-            //Network network = Network.BuildNetwork(2, 1, 5);
-            //NetworkInDGML dgmlRepresentation = NetworkInDGML.Create(network);
-            //dgmlRepresentation.Serialize("networkTopology.dgml");
+            Network network = Network.BuildNetwork(
+                new Math.CostFunctions.CrossEntropyCostFunction(), 
+                784, 10, 30);
 
-            List<TrainingData> trainingData = BuildTrainingDataFromMNIST("train-labels.idx1-ubyte", "train-images.idx3-ubyte");
-            List<TrainingData> testData = BuildTrainingDataFromMNIST("t10k-labels.idx1-ubyte", "t10k-images.idx3-ubyte");
-
-            //List<TrainingData> trainingData = BuildTrainingDataForXOR();
+            List<TrainingData> trainingData = BuildTrainingDataFromMNIST(
+                "train-labels.idx1-ubyte", "train-images.idx3-ubyte");
+            List<TrainingData> testData = BuildTrainingDataFromMNIST(
+                "t10k-labels.idx1-ubyte", "t10k-images.idx3-ubyte");
 
             NetworkTrainer networkTrainer = new NetworkTrainer();
             networkTrainer.Train(network, trainingData, .5, 30, 10);
-
-            //Console.WriteLine(string.Join(",", network.Execute(new double[2] { 0, 1 })));
-            //Console.WriteLine(string.Join(",", network.Execute(new double[2] { 1, 0 })));
-            //Console.WriteLine(string.Join(",", network.Execute(new double[2] { 0, 0 })));
-            //Console.WriteLine(string.Join(",", network.Execute(new double[2] { 1, 1 })));
-
-            //using (FileStream fout = File.Create("serialized_meanSquaredError.dat"))
-            //{
-            //    BinaryFormatter bf = new BinaryFormatter();
-            //    bf.Serialize(fout, network);
-            //}
-
-            //List<TrainingData> testData = BuildTrainingDataForXOR();
 
             Console.WriteLine($"Accurancy: {(networkTrainer.Test(network, testData) * 100.0).ToString("000.00")}%");
 

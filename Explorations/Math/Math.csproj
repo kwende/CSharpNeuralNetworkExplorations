@@ -42,11 +42,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CrossEntropyCostFunction.cs" />
+    <Compile Include="CostFunctions\CrossEntropyCostFunction.cs" />
     <Compile Include="RandomNormal.cs" />
-    <Compile Include="MeanSquaredErrorCostFunction.cs" />
+    <Compile Include="CostFunctions\MeanSquaredErrorCostFunction.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sigmoid.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Common\Common.csproj">
+      <Project>{925e4266-7384-4107-a75e-f0be8212b6ad}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

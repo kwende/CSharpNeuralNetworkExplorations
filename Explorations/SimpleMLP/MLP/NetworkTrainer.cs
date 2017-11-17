@@ -62,8 +62,6 @@ namespace SimpleMLP.MLP
                         double averaged = (debugAverageOutputError / (trainingDataLength * 1.0));
                         //fout.WriteLine(debugAverageOutputError / (trainingDataLength * 1.0)); 
                         Console.WriteLine($"Epoch {epochs}, Batch {b}, network error: {averaged * 1000} (scaled)");
-
-                        File.AppendAllText("C:/users/brush/desktop/averageError.csv", averaged.ToString() + "\n"); 
                     }
                     reportCount++;
 
