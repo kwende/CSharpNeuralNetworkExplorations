@@ -47,7 +47,7 @@ namespace SimpleMLP.MLP
             return network;
         }
 
-        public void UpdateNetwork(double stepSize)
+        public void UpdateNetwork(double stepSize, double regularizationConstant, double sizeOfTrainingData)
         {
             List<Layer> layersToUpdate = new List<Layer>();
             foreach (HiddenLayer hiddenLayer in HiddenLayers)
@@ -60,18 +60,20 @@ namespace SimpleMLP.MLP
             {
                 foreach (Neuron neuron in layersToUpdate[c].Neurons)
                 {
-                    double delta = stepSize * neuron.BatchErrors.Average();
+                    double delta = neuron.BatchErrors.Average();
                     neuron.BatchErrors.Clear();
 
-                    neuron.Bias = neuron.Bias - delta;
+                    neuron.Bias = neuron.Bias - stepSize * delta;
 
                     foreach (Dendrite dendrite in neuron.Dendrites)
                     {
                         double changeInErrorRelativeToWeight =
                             (delta * ((Neuron)dendrite.UpStreamNeuron).Activation);
 
+                        double regularization = (dendrite.Weight / sizeOfTrainingData) * regularizationConstant;
+
                         dendrite.Weight = dendrite.Weight -
-                            (changeInErrorRelativeToWeight);
+                            stepSize * (changeInErrorRelativeToWeight + regularization);
                     }
                 }
             }

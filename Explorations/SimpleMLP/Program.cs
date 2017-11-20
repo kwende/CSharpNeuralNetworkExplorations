@@ -101,15 +101,11 @@ namespace SimpleMLP
 
         static void OnLearningProgress(LearningProgress progress)
         {
-            //if(progress.Counter%100 == 0)
+            //if (progress.Counter % 1000 == 0)
             //{
-            //    File.AppendAllText("c:/users/brush/desktop/learning.csv", $"{progress.CurrentNetworkError}\n");
+            //    Console.WriteLine($"Epoch {progress.Epoch}, Batch {progress.BatchNumber}, Error {progress.CurrentNetworkError}");
+            //    File.AppendAllText("learningRate.csv", $"{progress.CurrentNetworkError}\n");
             //}
-
-            if (progress.Counter % 1000 == 0)
-            {
-                Console.WriteLine($"Epoch {progress.Epoch}, Batch {progress.BatchNumber}, Error {progress.CurrentNetworkError}");
-            }
         }
 
         static void Main(string[] args)
@@ -126,10 +122,21 @@ namespace SimpleMLP
             List<TrainingData> testData = BuildTrainingDataFromMNIST(
                 "t10k-labels.idx1-ubyte", "t10k-images.idx3-ubyte");
 
-            NetworkTrainer networkTrainer = new NetworkTrainer();
-            networkTrainer.Train(network, trainingData, .25, 30, 5, OnLearningProgress);
+            double[] lambdas = new double[10] { .0, .1, .2, .3, .4, .5, .6, .7, .8, .9 };
+            for (int c = 0; c < lambdas.Length; c++)
+            {
+                double totalAccuracy = 0.0;
 
-            Console.WriteLine($"Accurancy: {(networkTrainer.Test(network, testData) * 100.0).ToString("000.00")}%");
+                for (int d = 0; d < 10; d++)
+                {
+                    NetworkTrainer networkTrainer = new NetworkTrainer();
+                    networkTrainer.Train(network, trainingData.Take(5000).ToList(), .25, 30, 5, lambdas[c], OnLearningProgress);
+
+                    totalAccuracy += networkTrainer.Test(network, testData) * 100.0;
+                }
+
+                Console.WriteLine($"Lamda: {lambdas[c]}, Accurancy: {(totalAccuracy / 10.0).ToString("000.00")}%");
+            }
 
             return;
         }
