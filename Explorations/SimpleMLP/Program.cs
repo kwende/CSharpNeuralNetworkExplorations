@@ -124,7 +124,7 @@ namespace SimpleMLP
                 Console.Write("Testing lambda " + lambdas[c].ToString());
                 Network network = Network.BuildNetwork(
                     new Math.CostFunctions.CrossEntropyCostFunction(),
-                    new Math.RegularizationFunctions.L2Normalization(trainingData.Count, lambdas[c]),
+                    new Math.RegularizationFunctions.L1Normalization(trainingData.Count, lambdas[c]),
                     784, 10, 30);
 
                 double totalAccuracy = 0.0;
