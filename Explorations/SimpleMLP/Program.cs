@@ -113,10 +113,6 @@ namespace SimpleMLP
             // What I cannot create, I do not understand. 
             // ~Richard P. Feynman
 
-            Network network = Network.BuildNetwork(
-                new Math.CostFunctions.CrossEntropyCostFunction(),
-                784, 10, 30);
-
             List<TrainingData> trainingData = BuildTrainingDataFromMNIST(
                 "train-labels.idx1-ubyte", "train-images.idx3-ubyte");
             List<TrainingData> testData = BuildTrainingDataFromMNIST(
@@ -125,12 +121,19 @@ namespace SimpleMLP
             double[] lambdas = new double[10] { .0, .1, .2, .3, .4, .5, .6, .7, .8, .9 };
             for (int c = 0; c < lambdas.Length; c++)
             {
+                Network network = Network.BuildNetwork(
+                    new Math.CostFunctions.CrossEntropyCostFunction(),
+                    new Math.RegularizationFunctions.L2Normalization(trainingData.Count, lambdas[c]),
+                    784, 10, 30);
+
                 double totalAccuracy = 0.0;
 
                 for (int d = 0; d < 10; d++)
                 {
                     NetworkTrainer networkTrainer = new NetworkTrainer();
-                    networkTrainer.Train(network, trainingData.Take(5000).ToList(), .25, 30, 5, lambdas[c], OnLearningProgress);
+                    networkTrainer.Train(network,
+                        trainingData.Take(5000).ToList(),
+                        .25, 30, 5, OnLearningProgress);
 
                     totalAccuracy += networkTrainer.Test(network, testData) * 100.0;
                 }

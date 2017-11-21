@@ -14,7 +14,7 @@ namespace SimpleMLP.MLP
     {
         public void Train(Network network, List<TrainingData> trainingData,
             double stepSize, int numberOfEpochs, 
-            int batchSize, double regularizationConstant, Action<LearningProgress> onLearningProgres)
+            int batchSize, Action<LearningProgress> onLearningProgres)
         {
             int trainingDataLength = trainingData.Count;
 
@@ -50,7 +50,7 @@ namespace SimpleMLP.MLP
                         });
                     }
                     // update the network. 
-                    network.UpdateNetwork(stepSize, regularizationConstant, trainingData.Count());
+                    network.UpdateNetwork(stepSize);
                 }
             }
         }

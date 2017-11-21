@@ -17,19 +17,21 @@ namespace SimpleMLP.MLP
         public OutputLayer OutputLayer { get; set; }
 
         private ICostFunction _costFunction;
+        private IRegularizationFunction _regularizationFunction;
 
-        private Network(ICostFunction costFunction)
+        private Network(ICostFunction costFunction, IRegularizationFunction regularizationFunction)
         {
             HiddenLayers = new List<HiddenLayer>();
             _costFunction = costFunction;
+            _regularizationFunction = regularizationFunction;
         }
 
-        public static Network BuildNetwork(ICostFunction costFunction, int inputNeuronCount,
-            int outputNeuronCount, params int[] hiddenLayerCounts)
+        public static Network BuildNetwork(ICostFunction costFunction, IRegularizationFunction regularizationFunction,
+            int inputNeuronCount, int outputNeuronCount, params int[] hiddenLayerCounts)
         {
             Math.RandomNormal rand = new Math.RandomNormal(0, 1);
 
-            Network network = new Network(costFunction);
+            Network network = new Network(costFunction, regularizationFunction);
 
             network.InputLayer = InputLayer.BuildInputLayer(rand, inputNeuronCount);
 
@@ -47,7 +49,7 @@ namespace SimpleMLP.MLP
             return network;
         }
 
-        public void UpdateNetwork(double stepSize, double regularizationConstant, double sizeOfTrainingData)
+        public void UpdateNetwork(double stepSize)
         {
             List<Layer> layersToUpdate = new List<Layer>();
             foreach (HiddenLayer hiddenLayer in HiddenLayers)
@@ -70,7 +72,11 @@ namespace SimpleMLP.MLP
                         double changeInErrorRelativeToWeight =
                             (delta * ((Neuron)dendrite.UpStreamNeuron).Activation);
 
-                        double regularization = (dendrite.Weight / sizeOfTrainingData) * regularizationConstant;
+                        double regularization = 0.0;
+                        if (_regularizationFunction != null)
+                        {
+                            regularization = _regularizationFunction.Compute(dendrite.Weight);
+                        }
 
                         dendrite.Weight = dendrite.Weight -
                             stepSize * (changeInErrorRelativeToWeight + regularization);
