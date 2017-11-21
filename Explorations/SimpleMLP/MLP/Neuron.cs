@@ -19,7 +19,8 @@ namespace SimpleMLP.MLP
         }
 
         public double Bias { get; set; }
-        public List<Dendrite> Dendrites { get; set; }
+        public List<Dendrite> UpstreamDendrites { get; set; }
+        public List<Dendrite> DownstreamDendrites { get; set; }
         public double TotalInput { get; set; }
         public double Activation { get; set; }
         public List<double> BatchErrors { get; set; }
@@ -27,19 +28,20 @@ namespace SimpleMLP.MLP
 
         private Neuron()
         {
-            Dendrites = new List<Dendrite>();
+            UpstreamDendrites = new List<Dendrite>();
+            DownstreamDendrites = new List<Dendrite>();
             BatchErrors = new List<double>();
             UniqueName = GetNextUniqueId().ToString();
         }
 
         public double ComputeOutput()
         {
-            if (Dendrites.Count > 0)
+            if (UpstreamDendrites.Count > 0)
             {
                 double k = 0.0;
-                for (int c = 0; c < Dendrites.Count; c++)
+                for (int c = 0; c < UpstreamDendrites.Count; c++)
                 {
-                    k += Dendrites[c].UpStreamNeuron.Activation * Dendrites[c].Weight;
+                    k += UpstreamDendrites[c].UpStreamNeuron.Activation * UpstreamDendrites[c].Weight;
                 }
 
                 TotalInput = k + Bias;
@@ -61,7 +63,11 @@ namespace SimpleMLP.MLP
                 for (int c = 0; c < previousLayer.Neurons.Count; c++)
                 {
                     Neuron previousNeuron = previousLayer.Neurons[c];
-                    toReturn.Dendrites.Add(Dendrite.BuildWeight(previousNeuron, toReturn, rand.Next()));
+
+                    Dendrite dendrite = Dendrite.BuildWeight(previousNeuron, toReturn, rand.Next());
+
+                    toReturn.UpstreamDendrites.Add(dendrite);
+                    previousNeuron.DownstreamDendrites.Add(dendrite);
                 }
             }
 

@@ -35,7 +35,7 @@ namespace SimpleMLP.Documentation
 
             foreach (Neuron neuron in allNeurons)
             {
-                foreach (Dendrite dendrite in neuron.Dendrites)
+                foreach (Dendrite dendrite in neuron.UpstreamDendrites)
                 {
                     Neuron upStreamNeuron = dendrite.UpStreamNeuron;
 

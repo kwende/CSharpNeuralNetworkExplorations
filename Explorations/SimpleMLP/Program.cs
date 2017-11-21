@@ -104,7 +104,7 @@ namespace SimpleMLP
             //if (progress.Counter % 1000 == 0)
             //{
             //    Console.WriteLine($"Epoch {progress.Epoch}, Batch {progress.BatchNumber}, Error {progress.CurrentNetworkError}");
-            //    File.AppendAllText("learningRate.csv", $"{progress.CurrentNetworkError}\n");
+            //    //File.AppendAllText("learningRate.csv", $"{progress.CurrentNetworkError}\n");
             //}
         }
 
@@ -121,6 +121,7 @@ namespace SimpleMLP
             double[] lambdas = new double[10] { .0, .1, .2, .3, .4, .5, .6, .7, .8, .9 };
             for (int c = 0; c < lambdas.Length; c++)
             {
+                Console.Write("Testing lambda " + lambdas[c].ToString());
                 Network network = Network.BuildNetwork(
                     new Math.CostFunctions.CrossEntropyCostFunction(),
                     new Math.RegularizationFunctions.L2Normalization(trainingData.Count, lambdas[c]),
@@ -136,6 +137,7 @@ namespace SimpleMLP
                         .25, 30, 5, OnLearningProgress);
 
                     totalAccuracy += networkTrainer.Test(network, testData) * 100.0;
+                    Console.Write(".");
                 }
 
                 Console.WriteLine($"Lamda: {lambdas[c]}, Accurancy: {(totalAccuracy / 10.0).ToString("000.00")}%");

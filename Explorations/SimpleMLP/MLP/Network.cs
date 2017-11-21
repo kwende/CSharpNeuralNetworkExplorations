@@ -67,7 +67,7 @@ namespace SimpleMLP.MLP
 
                     neuron.Bias = neuron.Bias - stepSize * delta;
 
-                    foreach (Dendrite dendrite in neuron.Dendrites)
+                    foreach (Dendrite dendrite in neuron.UpstreamDendrites)
                     {
                         double changeInErrorRelativeToWeight =
                             (delta * ((Neuron)dendrite.UpStreamNeuron).Activation);
@@ -120,8 +120,7 @@ namespace SimpleMLP.MLP
                     double input = thisLayerNeuron.TotalInput;
 
                     double errorSum = 0.0;
-                    List<Dendrite> downStreamDendrites = nextLayer.Neurons.SelectMany(
-                        n => n.Dendrites.Where(l => l.UpStreamNeuron == thisLayerNeuron)).ToList();
+                    List<Dendrite> downStreamDendrites = thisLayerNeuron.DownstreamDendrites;
 
                     for (int f = 0; f < downStreamDendrites.Count; f++)
                     {
