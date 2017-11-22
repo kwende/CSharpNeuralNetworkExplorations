@@ -4,16 +4,15 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{A721A605-63F0-42B1-8E13-C860E2EF0C4C}</ProjectGuid>
-    <OutputType>Exe</OutputType>
-    <RootNamespace>SimpleMLP</RootNamespace>
-    <AssemblyName>SimpleMLP</AssemblyName>
+    <ProjectGuid>{9F2B0F39-5AC8-4EA5-A158-CAF0279DA8CA}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>MLP</RootNamespace>
+    <AssemblyName>MLP</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>x64</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -21,20 +20,20 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>x64</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -43,12 +42,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Documentation\NetworkInDGML.cs" />
-    <Compile Include="Program.cs" />
+    <Compile Include="Batch.cs" />
+    <Compile Include="Dendrite.cs" />
+    <Compile Include="Exceptions\InputAndWeightCountMismatchException.cs" />
+    <Compile Include="HiddenLayer.cs" />
+    <Compile Include="InputLayer.cs" />
+    <Compile Include="Layer.cs" />
+    <Compile Include="Network.cs" />
+    <Compile Include="NetworkTrainer.cs" />
+    <Compile Include="Neuron.cs" />
+    <Compile Include="OutputLayer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
+    <Compile Include="TrainingData.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj">
@@ -59,20 +64,6 @@
       <Project>{3ddb727e-a5bb-4565-9cbc-1d0d4a2842ac}</Project>
       <Name>Math</Name>
     </ProjectReference>
-    <ProjectReference Include="..\MLP\MLP.csproj">
-      <Project>{9f2b0f39-5ac8-4ea5-a158-caf0279da8ca}</Project>
-      <Name>MLP</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\MNISTReader\MNIST.csproj">
-      <Project>{75e1894f-9cd3-4f1a-8ecc-185235eafe24}</Project>
-      <Name>MNIST</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Documentation\OutputNeuronErrors.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PreBuildEvent>c:\windows\system32\xcopy "$(SolutionDir)Data\MNIST\*" /E /I /H /Y /D</PreBuildEvent>
-  </PropertyGroup>
 </Project>
