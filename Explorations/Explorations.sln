@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MNIST", "MNISTReader\MNIST.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{925E4266-7384-4107-A75E-F0BE8212B6AD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "UnitTests\UnitTests.csproj", "{74E7B5DC-1CDB-4862-9E39-83B075272114}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{925E4266-7384-4107-A75E-F0BE8212B6AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{925E4266-7384-4107-A75E-F0BE8212B6AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{925E4266-7384-4107-A75E-F0BE8212B6AD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{74E7B5DC-1CDB-4862-9E39-83B075272114}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{74E7B5DC-1CDB-4862-9E39-83B075272114}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{74E7B5DC-1CDB-4862-9E39-83B075272114}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{74E7B5DC-1CDB-4862-9E39-83B075272114}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
