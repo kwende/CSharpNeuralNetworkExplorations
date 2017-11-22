@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static System.Math; 
+using static System.Math;
 
 namespace Math
 {
@@ -14,6 +14,13 @@ namespace Math
         public RandomNormal(double mean, double stdDev)
         {
             _rand = new Random();
+            _mean = mean;
+            _stdDev = stdDev;
+        }
+
+        public RandomNormal(double mean, double stdDev, int seed)
+        {
+            _rand = new Random(seed); 
             _mean = mean;
             _stdDev = stdDev;
         }

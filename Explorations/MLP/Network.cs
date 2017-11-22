@@ -26,11 +26,9 @@ namespace SimpleMLP.MLP
             _regularizationFunction = regularizationFunction;
         }
 
-        public static Network BuildNetwork(ICostFunction costFunction, IRegularizationFunction regularizationFunction,
+        public static Network BuildNetwork(Math.RandomNormal rand, ICostFunction costFunction, IRegularizationFunction regularizationFunction,
             int inputNeuronCount, int outputNeuronCount, params int[] hiddenLayerCounts)
         {
-            Math.RandomNormal rand = new Math.RandomNormal(0, 1);
-
             Network network = new Network(costFunction, regularizationFunction);
 
             network.InputLayer = InputLayer.BuildInputLayer(rand, inputNeuronCount);
