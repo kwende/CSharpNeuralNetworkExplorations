@@ -29,7 +29,8 @@ namespace SimpleMLP.MLP
             NetworkRandom = rand;
         }
 
-        public static Network BuildNetwork(Random random, ICostFunction costFunction, IRegularizationFunction regularizationFunction,
+        public static Network BuildNetwork(Random random,
+            ICostFunction costFunction, IRegularizationFunction regularizationFunction,
             int inputNeuronCount, int outputNeuronCount, params int[] hiddenLayerCounts)
         {
             Network network = new Network(costFunction, regularizationFunction, random);
@@ -52,7 +53,7 @@ namespace SimpleMLP.MLP
             return network;
         }
 
-        public void UpdateNetwork(double stepSize)
+        public void UpdateNetwork(double stepSize, int sizeOfTrainingData)
         {
             List<Layer> layersToUpdate = new List<Layer>();
             foreach (HiddenLayer hiddenLayer in HiddenLayers)
@@ -78,7 +79,7 @@ namespace SimpleMLP.MLP
                         double regularization = 0.0;
                         if (_regularizationFunction != null)
                         {
-                            regularization = _regularizationFunction.Compute(dendrite.Weight);
+                            regularization = _regularizationFunction.Compute(dendrite.Weight, sizeOfTrainingData);
                         }
 
                         dendrite.Weight = dendrite.Weight -

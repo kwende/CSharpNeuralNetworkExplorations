@@ -10,16 +10,14 @@ namespace Math.RegularizationFunctions
     public class L1Normalization : IRegularizationFunction
     {
         private double _regularizationConstant = 0.0;
-        private double _sizeOfTrainingSet = 0.0;
-        public L1Normalization(int sizeOfTrainingSet, double regularizationConstant)
+        public L1Normalization(double regularizationConstant)
         {
             _regularizationConstant = regularizationConstant;
-            _sizeOfTrainingSet = sizeOfTrainingSet;
         }
 
-        public double Compute(double weight)
+        public double Compute(double weight, int sizeOfTrainingSet)
         {
-            return (System.Math.Sign(weight) / (_sizeOfTrainingSet)) * _regularizationConstant;
+            return (System.Math.Sign(weight) / (sizeOfTrainingSet * 1.0)) * _regularizationConstant;
         }
     }
 }

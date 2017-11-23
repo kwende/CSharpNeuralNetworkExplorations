@@ -49,7 +49,7 @@ namespace SimpleMLP.MLP
                         });
                     }
                     // update the network. 
-                    network.UpdateNetwork(stepSize);
+                    network.UpdateNetwork(stepSize, trainingDataLength);
                 }
             }
         }

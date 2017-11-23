@@ -8,6 +8,6 @@ namespace Common.Interfaces
 {
     public interface IRegularizationFunction
     {
-        double Compute(double weight);
+        double Compute(double weight, int sizeOfTrainingSet);
     }
 }

@@ -9,18 +9,16 @@ namespace Math.RegularizationFunctions
 {
     public class L2Normalization : IRegularizationFunction
     {
-        private double _sizeOfTrainingSet = 0.0;
         private double _regularizationConstant = 0.0;
 
-        public L2Normalization(int sizeOfTrainingSet, double regularizationConstant)
+        public L2Normalization(double regularizationConstant)
         {
-            _sizeOfTrainingSet = sizeOfTrainingSet;
             _regularizationConstant = regularizationConstant;
         }
 
-        public double Compute(double weight)
+        public double Compute(double weight, int sizeOfTrainingSet)
         {
-            return (weight / (_sizeOfTrainingSet * 1.0)) * _regularizationConstant;
+            return (weight / (sizeOfTrainingSet * 1.0)) * _regularizationConstant;
         }
     }
 }
