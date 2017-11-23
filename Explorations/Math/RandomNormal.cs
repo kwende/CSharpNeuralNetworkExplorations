@@ -20,7 +20,14 @@ namespace Math
 
         public RandomNormal(double mean, double stdDev, int seed)
         {
-            _rand = new Random(seed); 
+            _rand = new Random(seed);
+            _mean = mean;
+            _stdDev = stdDev;
+        }
+
+        public RandomNormal(double mean, double stdDev, Random rand)
+        {
+            _rand = rand;
             _mean = mean;
             _stdDev = stdDev;
         }

@@ -118,11 +118,10 @@ namespace SimpleMLP
             List<TrainingData> testData = BuildTrainingDataFromMNIST(
                 "t10k-labels.idx1-ubyte", "t10k-images.idx3-ubyte");
 
-
             double[] lambdas = new double[10] { .0, .1, .2, .3, .4, .5, .6, .7, .8, .9 };
             for (int c = 0; c < lambdas.Length; c++)
             {
-                Math.RandomNormal rand = new Math.RandomNormal(0, 1, 1234);
+                Random rand = new Random(1234);
                 Console.Write("Testing lambda " + lambdas[c].ToString());
                 Network network = Network.BuildNetwork(
                     rand,

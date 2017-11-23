@@ -13,16 +13,15 @@ namespace SimpleMLP.MLP
     public class NetworkTrainer
     {
         public void Train(Network network, List<TrainingData> trainingData,
-            double stepSize, int numberOfEpochs, 
+            double stepSize, int numberOfEpochs,
             int batchSize, Action<LearningProgress> onLearningProgres)
         {
             int trainingDataLength = trainingData.Count;
 
             int counter = 0;
-            Random random = new Random();
             for (int epoch = 0; epoch < numberOfEpochs; epoch++)
             {
-                Batch[] batches = Batch.CreateBatches(trainingData, batchSize, random);
+                Batch[] batches = Batch.CreateBatches(trainingData, batchSize, network.NetworkRandom);
 
                 for (int b = 0; b < batches.Length; b++)
                 {

@@ -15,21 +15,26 @@ namespace SimpleMLP.MLP
         public InputLayer InputLayer { get; set; }
         public List<HiddenLayer> HiddenLayers { get; set; }
         public OutputLayer OutputLayer { get; set; }
+        public Random NetworkRandom { get; private set; }
 
         private ICostFunction _costFunction;
         private IRegularizationFunction _regularizationFunction;
 
-        private Network(ICostFunction costFunction, IRegularizationFunction regularizationFunction)
+        private Network(ICostFunction costFunction, IRegularizationFunction regularizationFunction, Random rand)
         {
             HiddenLayers = new List<HiddenLayer>();
             _costFunction = costFunction;
             _regularizationFunction = regularizationFunction;
+
+            NetworkRandom = rand;
         }
 
-        public static Network BuildNetwork(Math.RandomNormal rand, ICostFunction costFunction, IRegularizationFunction regularizationFunction,
+        public static Network BuildNetwork(Random random, ICostFunction costFunction, IRegularizationFunction regularizationFunction,
             int inputNeuronCount, int outputNeuronCount, params int[] hiddenLayerCounts)
         {
-            Network network = new Network(costFunction, regularizationFunction);
+            Network network = new Network(costFunction, regularizationFunction, random);
+
+            Math.RandomNormal rand = new Math.RandomNormal(0, 1, network.NetworkRandom);
 
             network.InputLayer = InputLayer.BuildInputLayer(rand, inputNeuronCount);
 
