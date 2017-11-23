@@ -129,7 +129,7 @@ namespace SimpleMLP
                 Network network = Network.BuildNetwork(
                     rand,
                     new Math.CostFunctions.CrossEntropyCostFunction(),
-                    new Math.RegularizationFunctions.L2Normalization(lambdas[c]),
+                    new Math.RegularizationFunctions.L1Normalization(lambdas[c]),
                     784, 10, 30);
 
                 double totalAccuracy = 0.0;
