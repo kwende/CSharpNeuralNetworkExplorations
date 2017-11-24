@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SimpleMLP.MLP
+namespace MLP
 {
     [Serializable]
     public class Neuron

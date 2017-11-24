@@ -1,14 +1,9 @@
 ﻿using Common.DataStructures;
-using SimpleMLP.Documentation;
-using SimpleMLP.MLP;
+using MLP;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.IO;
 using System.Linq;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Text;
-using System.Threading.Tasks;
 
 // for Linux: https://stackoverflow.com/questions/17628660/how-can-i-use-xbuild-to-build-release-binary
 

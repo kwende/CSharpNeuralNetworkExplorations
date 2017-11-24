@@ -45,6 +45,7 @@
   <ItemGroup>
     <Compile Include="Batch.cs" />
     <Compile Include="Dendrite.cs" />
+    <Compile Include="DropoutLayerOptions.cs" />
     <Compile Include="Exceptions\InputAndWeightCountMismatchException.cs" />
     <Compile Include="HiddenLayer.cs" />
     <Compile Include="InputLayer.cs" />

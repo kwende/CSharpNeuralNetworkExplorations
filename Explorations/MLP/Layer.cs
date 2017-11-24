@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SimpleMLP.MLP
+namespace MLP
 {
     [Serializable]
     public abstract class Layer
