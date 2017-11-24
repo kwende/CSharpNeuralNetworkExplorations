@@ -51,7 +51,7 @@
     <Compile Include="InputLayer.cs" />
     <Compile Include="Layer.cs" />
     <Compile Include="Network.cs" />
-    <Compile Include="NetworkOptions.cs" />
+    <Compile Include="DropoutOptions.cs" />
     <Compile Include="NetworkTrainer.cs" />
     <Compile Include="Neuron.cs" />
     <Compile Include="OutputLayer.cs" />

@@ -117,10 +117,16 @@ namespace SimpleMLP
 
             trainingData = trainingData.Take(5000).ToList();
             Random rand = new Random(1234);
+
+            DropoutOptions dropoutOptions = new DropoutOptions();
+            dropoutOptions.DropoutLayerIndices.Add(1);
+            dropoutOptions.ProbabilityOfNeuronDropout = .5;
+
             Network network = Network.BuildNetwork(
                 rand,
                 new Math.CostFunctions.CrossEntropyCostFunction(),
                 new Math.RegularizationFunctions.L2Normalization(.1),
+                dropoutOptions,
                 784, 10, 30);
 
             double totalAccuracy = 0.0;
@@ -135,6 +141,8 @@ namespace SimpleMLP
                 totalAccuracy += networkTrainer.Test(network, testData) * 100.0;
                 Console.Write(".");
             }
+
+            Console.WriteLine($"Accurancy: {(totalAccuracy / 10.0).ToString("000.00")}%");
 
             return;
         }
