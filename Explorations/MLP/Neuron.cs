@@ -25,6 +25,7 @@ namespace MLP
         public double Activation { get; set; }
         public List<double> BatchErrors { get; set; }
         public string UniqueName { get; private set; }
+        public bool DropOut { get; set; }
 
         private Neuron()
         {

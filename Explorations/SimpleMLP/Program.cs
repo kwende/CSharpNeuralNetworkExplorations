@@ -115,32 +115,25 @@ namespace SimpleMLP
             List<TrainingData> testData = BuildTrainingDataFromMNIST(
                 "t10k-labels.idx1-ubyte", "t10k-images.idx3-ubyte");
 
-            trainingData = trainingData.Take(5000).ToList(); 
-            double[] lambdas = new double[10] { .0, .1, .2, .3, .4, .5, .6, .7, .8, .9 };
-            for (int c = 0; c < lambdas.Length; c++)
+            trainingData = trainingData.Take(5000).ToList();
+            Random rand = new Random(1234);
+            Network network = Network.BuildNetwork(
+                rand,
+                new Math.CostFunctions.CrossEntropyCostFunction(),
+                new Math.RegularizationFunctions.L2Normalization(.1),
+                784, 10, 30);
+
+            double totalAccuracy = 0.0;
+
+            for (int d = 0; d < 10; d++)
             {
-                Random rand = new Random(1234);
-                Console.Write("Testing lambda " + lambdas[c].ToString());
-                Network network = Network.BuildNetwork(
-                    rand,
-                    new Math.CostFunctions.CrossEntropyCostFunction(),
-                    new Math.RegularizationFunctions.L1Normalization(lambdas[c]),
-                    784, 10, 30);
+                NetworkTrainer networkTrainer = new NetworkTrainer();
+                networkTrainer.Train(network,
+                    trainingData,
+                    .25, 30, 5, OnLearningProgress);
 
-                double totalAccuracy = 0.0;
-
-                for (int d = 0; d < 10; d++)
-                {
-                    NetworkTrainer networkTrainer = new NetworkTrainer();
-                    networkTrainer.Train(network,
-                        trainingData,
-                        .25, 30, 5, OnLearningProgress);
-
-                    totalAccuracy += networkTrainer.Test(network, testData) * 100.0;
-                    Console.Write(".");
-                }
-
-                Console.WriteLine($"Lamda: {lambdas[c]}, Accurancy: {(totalAccuracy / 10.0).ToString("000.00")}%");
+                totalAccuracy += networkTrainer.Test(network, testData) * 100.0;
+                Console.Write(".");
             }
 
             return;
