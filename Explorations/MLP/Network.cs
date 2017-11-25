@@ -85,6 +85,7 @@ namespace MLP
                 for (int n = 0; n < layersToUpdate[c].Neurons.Count; n++)
                 {
                     Neuron neuron = layersToUpdate[c].Neurons[n];
+                    bool isNeuronDropped = layersToUpdate[c].DropOutMask[n] == 0;
 
                     double delta = neuron.BatchErrors.Average();
                     neuron.BatchErrors.Clear();
@@ -98,7 +99,7 @@ namespace MLP
                             (delta * upstreamNeuron.Activation);
 
                         double regularization = 0.0;
-                        if (_regularizationFunction != null)
+                        if (_regularizationFunction != null && !isNeuronDropped)
                         {
                             regularization = _regularizationFunction.Compute(dendrite.Weight, sizeOfTrainingData);
                         }

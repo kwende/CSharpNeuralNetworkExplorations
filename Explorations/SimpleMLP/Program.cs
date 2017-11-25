@@ -3,6 +3,7 @@ using MLP;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 
 // for Linux: https://stackoverflow.com/questions/17628660/how-can-i-use-xbuild-to-build-release-binary
@@ -98,11 +99,11 @@ namespace SimpleMLP
 
         static void OnLearningProgress(LearningProgress progress)
         {
-            //if (progress.Counter % 1000 == 0)
-            //{
-            //    Console.WriteLine($"Epoch {progress.Epoch}, Batch {progress.BatchNumber}, Error {progress.CurrentNetworkError}");
-            //    //File.AppendAllText("learningRate.csv", $"{progress.CurrentNetworkError}\n");
-            //}
+            if (progress.Counter % 100 == 0)
+            {
+                //Console.WriteLine($"Epoch {progress.Epoch}, Batch {progress.BatchNumber}, Error {progress.CurrentNetworkError}");
+                File.AppendAllText("c:/users/ben/desktop/learningRate_smallDropOut.csv", $"{progress.CurrentNetworkError}\n");
+            }
         }
 
         static void Main(string[] args)
@@ -118,28 +119,33 @@ namespace SimpleMLP
             trainingData = trainingData.Take(5000).ToList();
             Random rand = new Random(1234);
 
-            Network network = Network.BuildNetwork(
-                rand,
-                new Math.CostFunctions.CrossEntropyCostFunction(),
-                new Math.RegularizationFunctions.L2Normalization(.1),
-                new DropoutLayerOptions(0),
-                784, 10, 30);
-
-            double totalAccuracy = 0.0;
-
-            const int NumberOfIterations = 10; 
-
-            for(int c=0;c<NumberOfIterations;c++)
+            double[] lambdas = new double[10] { 0, .1, .2, .3, .4, .5, .6, .7, .8, .9 }; 
+            for(int l=0;l<lambdas.Length;l++)
             {
-                NetworkTrainer networkTrainer = new NetworkTrainer();
-                networkTrainer.Train(network,
-                    trainingData,
-                    .25, 30, 5, OnLearningProgress);
+                Network network = Network.BuildNetwork(
+                    rand,
+                    new Math.CostFunctions.CrossEntropyCostFunction(),
+                    new Math.RegularizationFunctions.L2Normalization(0),
+                    new DropoutLayerOptions(lambdas[l], 1),
+                    784, 10, 30);
 
-                totalAccuracy += networkTrainer.Test(network, testData) * 100.0;
+                double totalAccuracy = 0.0;
+
+                const int NumberOfIterations = 10;
+
+                for (int c = 0; c < NumberOfIterations; c++)
+                {
+                    NetworkTrainer networkTrainer = new NetworkTrainer();
+                    networkTrainer.Train(network,
+                        trainingData,
+                        .25, 30, 5, OnLearningProgress);
+
+                    totalAccuracy += networkTrainer.Test(network, testData) * 100.0;
+                }
+
+                Console.WriteLine($"Lambads: {lambdas[l]} Accurancy: {(totalAccuracy / (NumberOfIterations * 1.0)).ToString("000.00")}%");
+
             }
-
-            Console.WriteLine($"Accurancy: {(totalAccuracy / (NumberOfIterations * 1.0)).ToString("000.00")}%");
 
             return;
         }
