@@ -21,6 +21,8 @@ namespace MLP
             int counter = 0;
             for (int epoch = 0; epoch < numberOfEpochs; epoch++)
             {
+                network.UpdateDroputLayers();
+
                 Batch[] batches = Batch.CreateBatches(trainingData, batchSize, network.NetworkRandom);
 
                 for (int b = 0; b < batches.Length; b++)

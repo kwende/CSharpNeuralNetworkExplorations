@@ -82,16 +82,14 @@ namespace MLP
 
             for (int c = layersToUpdate.Count - 1; c >= 0; c--)
             {
-                //foreach (Neuron neuron in layersToUpdate[c].Neurons)
                 for (int n = 0; n < layersToUpdate[c].Neurons.Count; n++)
                 {
                     Neuron neuron = layersToUpdate[c].Neurons[n];
-                    double dropoutBit = layersToUpdate[c].DropOutMask[n];
 
                     double delta = neuron.BatchErrors.Average();
                     neuron.BatchErrors.Clear();
 
-                    neuron.Bias = neuron.Bias - (stepSize * delta) * dropoutBit;
+                    neuron.Bias = neuron.Bias - (stepSize * delta);
 
                     foreach (Dendrite dendrite in neuron.UpstreamDendrites)
                     {
@@ -106,7 +104,7 @@ namespace MLP
                         }
 
                         dendrite.Weight = dendrite.Weight -
-                            (stepSize * (changeInErrorRelativeToWeight + regularization)) * dropoutBit;
+                            (stepSize * (changeInErrorRelativeToWeight + regularization));
                     }
                 }
             }
@@ -143,6 +141,8 @@ namespace MLP
                 for (int e = 0; e < hiddenLayer.Neurons.Count; e++)
                 {
                     Neuron thisLayerNeuron = (Neuron)hiddenLayer.Neurons[e];
+                    double dropoutBit = hiddenLayer.DropOutMask[e];
+
                     double input = thisLayerNeuron.TotalInput;
 
                     double errorSum = 0.0;
@@ -159,7 +159,7 @@ namespace MLP
                         errorSum += error;
                     }
 
-                    thisLayerNeuron.BatchErrors.Add(errorSum * Math.Sigmoid.ComputeDerivative(input));
+                    thisLayerNeuron.BatchErrors.Add(errorSum * Math.Sigmoid.ComputeDerivative(input) * dropoutBit);
                 }
             }
 
@@ -181,6 +181,22 @@ namespace MLP
             OutputLayer.ComputeLayerExecutionOutput();
 
             return OutputLayer.Neurons.Select(n => ((Neuron)n).Activation).ToArray();
+        }
+
+        public void UpdateDroputLayers()
+        {
+            foreach (HiddenLayer hiddenLayer in HiddenLayers)
+            {
+                if (hiddenLayer.IsDropoutLayer)
+                {
+                    hiddenLayer.UpdateDropoutMask();
+                }
+            }
+
+            if (OutputLayer.IsDropoutLayer)
+            {
+                OutputLayer.UpdateDropoutMask();
+            }
         }
 
         public double[] Feedforward(double[] x)

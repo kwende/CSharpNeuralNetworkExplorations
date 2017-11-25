@@ -34,12 +34,12 @@ namespace MLP
             _random = rand;
         }
 
-        private void UpdateDropoutMask(Random rand, double probabilityOfDropout)
+        public void UpdateDropoutMask()
         {
             DropOutMask.Clear();
             foreach (Neuron neuron in Neurons)
             {
-                if (rand.NextDouble() <= probabilityOfDropout)
+                if (_random.NextDouble() <= _probabilityOfDropout)
                 {
                     DropOutMask.Add(0);
                 }
@@ -65,11 +65,6 @@ namespace MLP
         public double[] ComputeLayerTrainingOutput()
         {
             List<double> output = new List<double>();
-
-            if (IsDropoutLayer)
-            {
-                UpdateDropoutMask(_random, _probabilityOfDropout);
-            }
 
             for (int n = 0; n < Neurons.Count; n++)
             {
