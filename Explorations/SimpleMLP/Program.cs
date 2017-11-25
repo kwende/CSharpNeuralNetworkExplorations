@@ -122,20 +122,17 @@ namespace SimpleMLP
                 rand,
                 new Math.CostFunctions.CrossEntropyCostFunction(),
                 new Math.RegularizationFunctions.L2Normalization(.1),
+                new DropoutLayerOptions(.5, 1),
                 784, 10, 30);
 
             double totalAccuracy = 0.0;
 
-            //for (int d = 0; d < 10; d++)
-            {
-                NetworkTrainer networkTrainer = new NetworkTrainer();
-                networkTrainer.Train(network,
-                    trainingData,
-                    .25, 30, 5, OnLearningProgress);
+            NetworkTrainer networkTrainer = new NetworkTrainer();
+            networkTrainer.Train(network,
+                trainingData,
+                .25, 30, 5, OnLearningProgress);
 
-                totalAccuracy += networkTrainer.Test(network, testData) * 100.0;
-                Console.Write(".");
-            }
+            totalAccuracy += networkTrainer.Test(network, testData) * 100.0;
 
             Console.WriteLine($"Accurancy: {(totalAccuracy / 10.0).ToString("000.00")}%");
 

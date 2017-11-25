@@ -8,11 +8,13 @@ namespace MLP
 {
     public class DropoutLayerOptions
     {
+        public double ProbabilityOfDropout { get; private set; }
         public int[] DropoutLayerIndices { get; private set; }
 
-        public DropoutLayerOptions(params int[] layerIndices)
+        public DropoutLayerOptions(double probabilityOfDropout, params int[] layerIndices)
         {
             DropoutLayerIndices = layerIndices;
+            ProbabilityOfDropout = probabilityOfDropout;
         }
     }
 }

@@ -9,12 +9,14 @@ namespace MLP
     [Serializable]
     public class OutputLayer : Layer
     {
-        private OutputLayer() : base()
+        private OutputLayer(int numberOfNeurons, double probabilityOfDropout, Random rand) :
+            base(numberOfNeurons, probabilityOfDropout, rand)
         {
         }
-        public static OutputLayer BuildOutputLayer(Math.RandomNormal rand, HiddenLayer previousLayer, int numberOfNeurons)
+        public static OutputLayer BuildOutputLayer(Math.RandomNormal rand,
+            HiddenLayer previousLayer, int numberOfNeurons, double probabilityOfDropout)
         {
-            OutputLayer toReturn = new OutputLayer();
+            OutputLayer toReturn = new OutputLayer(numberOfNeurons, probabilityOfDropout, rand.InternalRandom);
             for (int c = 0; c < numberOfNeurons; c++)
             {
                 toReturn.Neurons.Add(Neuron.BuildNeuron(rand, previousLayer));

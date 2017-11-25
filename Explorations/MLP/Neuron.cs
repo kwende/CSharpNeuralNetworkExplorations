@@ -34,7 +34,7 @@ namespace MLP
             UniqueName = GetNextUniqueId().ToString();
         }
 
-        public double ComputeOutput()
+        public double ComputeExecutionOutput(double probabilityOfDropout)
         {
             if (UpstreamDendrites.Count > 0)
             {
@@ -50,7 +50,26 @@ namespace MLP
                 Activation = Math.Sigmoid.Compute(TotalInput);
             }
 
-            return Activation;
+            return Activation * (1 - probabilityOfDropout);
+        }
+
+        public double ComputeTrainingOutput(double dropOutBit = 1)
+        {
+            if (UpstreamDendrites.Count > 0)
+            {
+                double k = 0.0;
+                for (int c = 0; c < UpstreamDendrites.Count; c++)
+                {
+                    Neuron upstreamNeuron = UpstreamDendrites[c].UpStreamNeuron;
+                    k += upstreamNeuron.Activation * UpstreamDendrites[c].Weight;
+                }
+
+                TotalInput = (k + Bias);
+
+                Activation = Math.Sigmoid.Compute(TotalInput);
+            }
+
+            return Activation * dropOutBit;
         }
 
         public static Neuron BuildNeuron(Math.RandomNormal rand, Layer previousLayer)

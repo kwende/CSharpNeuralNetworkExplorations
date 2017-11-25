@@ -19,39 +19,54 @@ namespace MLP
 
         private ICostFunction _costFunction;
         private IRegularizationFunction _regularizationFunction;
+        private DropoutLayerOptions _dropoutLayerOptions;
 
         private Network(ICostFunction costFunction,
             IRegularizationFunction regularizationFunction,
+            DropoutLayerOptions dropoutLayerOptions,
             Random rand)
         {
             HiddenLayers = new List<HiddenLayer>();
 
             _costFunction = costFunction;
             _regularizationFunction = regularizationFunction;
+            _dropoutLayerOptions = dropoutLayerOptions;
 
             NetworkRandom = rand;
         }
 
         public static Network BuildNetwork(Random random,
             ICostFunction costFunction, IRegularizationFunction regularizationFunction,
+            DropoutLayerOptions dropoutLayerOptions,
             int inputNeuronCount, int outputNeuronCount, params int[] hiddenLayerCounts)
         {
-            Network network = new Network(costFunction, regularizationFunction, random);
+            Network network = new Network(costFunction, regularizationFunction,
+                dropoutLayerOptions, random);
 
             Math.RandomNormal rand = new Math.RandomNormal(0, 1, network.NetworkRandom);
 
             network.InputLayer = InputLayer.BuildInputLayer(rand, inputNeuronCount);
 
             Layer previousLayer = network.InputLayer;
+            int dropoutLayerIndex = 1;
+            bool isDropoutLayer = false;
             for (int c = 0; c < hiddenLayerCounts.Length; c++)
             {
+                isDropoutLayer = dropoutLayerOptions.DropoutLayerIndices.Contains(dropoutLayerIndex);
                 int currentLayerCount = hiddenLayerCounts[c];
-                HiddenLayer hiddenLayer = HiddenLayer.BuildHiddenLayer(rand, previousLayer, currentLayerCount);
+
+                HiddenLayer hiddenLayer = HiddenLayer.BuildHiddenLayer(rand, previousLayer,
+                    currentLayerCount, isDropoutLayer ? dropoutLayerOptions.ProbabilityOfDropout : 0);
+
                 network.HiddenLayers.Add(hiddenLayer);
                 previousLayer = hiddenLayer;
+
+                dropoutLayerIndex++;
             }
 
-            network.OutputLayer = OutputLayer.BuildOutputLayer(rand, (HiddenLayer)previousLayer, outputNeuronCount);
+            isDropoutLayer = dropoutLayerOptions.DropoutLayerIndices.Contains(dropoutLayerIndex);
+            network.OutputLayer = OutputLayer.BuildOutputLayer(rand, (HiddenLayer)previousLayer,
+                outputNeuronCount, isDropoutLayer ? dropoutLayerOptions.ProbabilityOfDropout : 0);
 
             return network;
         }
@@ -67,12 +82,16 @@ namespace MLP
 
             for (int c = layersToUpdate.Count - 1; c >= 0; c--)
             {
-                foreach (Neuron neuron in layersToUpdate[c].Neurons)
+                //foreach (Neuron neuron in layersToUpdate[c].Neurons)
+                for (int n = 0; n < layersToUpdate[c].Neurons.Count; n++)
                 {
+                    Neuron neuron = layersToUpdate[c].Neurons[n];
+                    double dropoutBit = layersToUpdate[c].DropOutMask[n];
+
                     double delta = neuron.BatchErrors.Average();
                     neuron.BatchErrors.Clear();
 
-                    neuron.Bias = neuron.Bias - stepSize * delta;
+                    neuron.Bias = neuron.Bias - (stepSize * delta) * dropoutBit;
 
                     foreach (Dendrite dendrite in neuron.UpstreamDendrites)
                     {
@@ -87,7 +106,7 @@ namespace MLP
                         }
 
                         dendrite.Weight = dendrite.Weight -
-                            stepSize * (changeInErrorRelativeToWeight + regularization);
+                            (stepSize * (changeInErrorRelativeToWeight + regularization)) * dropoutBit;
                     }
                 }
             }
@@ -156,10 +175,10 @@ namespace MLP
 
             foreach (HiddenLayer hiddenLayer in HiddenLayers)
             {
-                hiddenLayer.ComputeLayerOutput();
+                hiddenLayer.ComputeLayerExecutionOutput();
             }
 
-            OutputLayer.ComputeLayerOutput();
+            OutputLayer.ComputeLayerExecutionOutput();
 
             return OutputLayer.Neurons.Select(n => ((Neuron)n).Activation).ToArray();
         }
@@ -173,11 +192,11 @@ namespace MLP
 
             foreach (HiddenLayer hiddenLayer in HiddenLayers)
             {
-                hiddenLayer.ComputeLayerOutput();
+                hiddenLayer.ComputeLayerTrainingOutput();
             }
 
             List<double> output = new List<double>();
-            output.AddRange(OutputLayer.ComputeLayerOutput());
+            output.AddRange(OutputLayer.ComputeLayerTrainingOutput());
 
             return output.ToArray();
         }
