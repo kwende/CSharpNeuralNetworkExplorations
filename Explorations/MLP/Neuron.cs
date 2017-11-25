@@ -25,7 +25,6 @@ namespace MLP
         public double Activation { get; set; }
         public List<double> BatchErrors { get; set; }
         public string UniqueName { get; private set; }
-        public bool DropOut { get; set; }
 
         private Neuron()
         {
@@ -35,7 +34,7 @@ namespace MLP
             UniqueName = GetNextUniqueId().ToString();
         }
 
-        public double ComputeOutput(double probabilityOfDropout = 0.0)
+        public double ComputeOutput()
         {
             if (UpstreamDendrites.Count > 0)
             {
@@ -43,13 +42,10 @@ namespace MLP
                 for (int c = 0; c < UpstreamDendrites.Count; c++)
                 {
                     Neuron upstreamNeuron = UpstreamDendrites[c].UpStreamNeuron;
-                    if (!upstreamNeuron.DropOut)
-                    {
-                        k += upstreamNeuron.Activation * UpstreamDendrites[c].Weight;
-                    }
+                    k += upstreamNeuron.Activation * UpstreamDendrites[c].Weight;
                 }
 
-                TotalInput = (k + Bias) * (1 - probabilityOfDropout);
+                TotalInput = (k + Bias);
 
                 Activation = Math.Sigmoid.Compute(TotalInput);
             }

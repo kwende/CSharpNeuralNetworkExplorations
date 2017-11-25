@@ -19,29 +19,24 @@ namespace MLP
 
         private ICostFunction _costFunction;
         private IRegularizationFunction _regularizationFunction;
-        private DropoutOptions _dropoutOptions;
 
         private Network(ICostFunction costFunction,
             IRegularizationFunction regularizationFunction,
-            Random rand,
-            DropoutOptions dropoutOptions)
+            Random rand)
         {
             HiddenLayers = new List<HiddenLayer>();
 
             _costFunction = costFunction;
             _regularizationFunction = regularizationFunction;
-            _dropoutOptions = dropoutOptions;
 
             NetworkRandom = rand;
         }
 
         public static Network BuildNetwork(Random random,
             ICostFunction costFunction, IRegularizationFunction regularizationFunction,
-            DropoutOptions dropoutOptions,
             int inputNeuronCount, int outputNeuronCount, params int[] hiddenLayerCounts)
         {
-            Network network = new Network(costFunction, regularizationFunction,
-                random, dropoutOptions);
+            Network network = new Network(costFunction, regularizationFunction, random);
 
             Math.RandomNormal rand = new Math.RandomNormal(0, 1, network.NetworkRandom);
 
@@ -74,33 +69,26 @@ namespace MLP
             {
                 foreach (Neuron neuron in layersToUpdate[c].Neurons)
                 {
-                    if (!neuron.DropOut)
+                    double delta = neuron.BatchErrors.Average();
+                    neuron.BatchErrors.Clear();
+
+                    neuron.Bias = neuron.Bias - stepSize * delta;
+
+                    foreach (Dendrite dendrite in neuron.UpstreamDendrites)
                     {
-                        double delta = neuron.BatchErrors.Average();
-                        neuron.BatchErrors.Clear();
+                        Neuron upstreamNeuron = (Neuron)dendrite.UpStreamNeuron;
+                        double changeInErrorRelativeToWeight =
+                            (delta * upstreamNeuron.Activation);
 
-                        neuron.Bias = neuron.Bias - stepSize * delta;
-
-                        foreach (Dendrite dendrite in neuron.UpstreamDendrites)
+                        double regularization = 0.0;
+                        if (_regularizationFunction != null)
                         {
-                            Neuron upstreamNeuron = (Neuron)dendrite.UpStreamNeuron;
-                            if(!upstreamNeuron.DropOut)
-                            {
-                                double changeInErrorRelativeToWeight =
-                                    (delta * upstreamNeuron.Activation);
-
-                                double regularization = 0.0;
-                                if (_regularizationFunction != null)
-                                {
-                                    regularization = _regularizationFunction.Compute(dendrite.Weight, sizeOfTrainingData);
-                                }
-
-                                dendrite.Weight = dendrite.Weight -
-                                    stepSize * (changeInErrorRelativeToWeight + regularization);
-                            }
+                            regularization = _regularizationFunction.Compute(dendrite.Weight, sizeOfTrainingData);
                         }
-                    }
 
+                        dendrite.Weight = dendrite.Weight -
+                            stepSize * (changeInErrorRelativeToWeight + regularization);
+                    }
                 }
             }
         }
@@ -130,39 +118,30 @@ namespace MLP
             }
 
             // Compute error for each neuron in each layer moving backwards (backprop). 
-            Layer nextLayer = OutputLayer;
             for (int d = HiddenLayers.Count - 1; d >= 0; d--)
             {
                 HiddenLayer hiddenLayer = HiddenLayers[d];
                 for (int e = 0; e < hiddenLayer.Neurons.Count; e++)
                 {
                     Neuron thisLayerNeuron = (Neuron)hiddenLayer.Neurons[e];
-                    if (!thisLayerNeuron.DropOut)
+                    double input = thisLayerNeuron.TotalInput;
+
+                    double errorSum = 0.0;
+                    List<Dendrite> downStreamDendrites = thisLayerNeuron.DownstreamDendrites;
+
+                    for (int f = 0; f < downStreamDendrites.Count; f++)
                     {
-                        double input = thisLayerNeuron.TotalInput;
+                        Dendrite currentDendrite = downStreamDendrites[f];
+                        Neuron downStreamNeuron = currentDendrite.DownStreamNeuron;
 
-                        double errorSum = 0.0;
-                        List<Dendrite> downStreamDendrites = thisLayerNeuron.DownstreamDendrites;
-
-                        for (int f = 0; f < downStreamDendrites.Count; f++)
-                        {
-                            Dendrite currentDendrite = downStreamDendrites[f];
-                            Neuron downStreamNeuron = currentDendrite.DownStreamNeuron;
-
-                            if (!downStreamNeuron.DropOut)
-                            {
-                                double delta = downStreamNeuron.BatchErrors.Last();
-                                double weight = currentDendrite.Weight;
-                                double error = delta * weight;
-                                errorSum += error;
-                            }
-                        }
-
-                        thisLayerNeuron.BatchErrors.Add(errorSum * Math.Sigmoid.ComputeDerivative(input));
+                        double delta = downStreamNeuron.BatchErrors.Last();
+                        double weight = currentDendrite.Weight;
+                        double error = delta * weight;
+                        errorSum += error;
                     }
-                }
 
-                nextLayer = hiddenLayer;
+                    thisLayerNeuron.BatchErrors.Add(errorSum * Math.Sigmoid.ComputeDerivative(input));
+                }
             }
 
             return totalNetworkError;
@@ -175,29 +154,12 @@ namespace MLP
                 (InputLayer.Neurons[d]).Activation = inputs[d];
             }
 
-            int layerIndex = 1;
             foreach (HiddenLayer hiddenLayer in HiddenLayers)
             {
-                if (_dropoutOptions.DropoutLayerIndices.Contains(layerIndex))
-                {
-                    hiddenLayer.ComputeFullLayerOutputConsideringDropouts(
-                        _dropoutOptions.ProbabilityOfNeuronDropout);
-                }
-                else
-                {
-                    hiddenLayer.ComputeFullLayerOutput();
-                }
+                hiddenLayer.ComputeLayerOutput();
             }
 
-            if (_dropoutOptions.DropoutLayerIndices.Contains(layerIndex))
-            {
-                OutputLayer.ComputeFullLayerOutputConsideringDropouts(
-                    _dropoutOptions.ProbabilityOfNeuronDropout);
-            }
-            else
-            {
-                OutputLayer.ComputeFullLayerOutput();
-            }
+            OutputLayer.ComputeLayerOutput();
 
             return OutputLayer.Neurons.Select(n => ((Neuron)n).Activation).ToArray();
         }
@@ -209,33 +171,13 @@ namespace MLP
                 (InputLayer.Neurons[d]).Activation = x[d];
             }
 
-            int layerIndex = 1;
             foreach (HiddenLayer hiddenLayer in HiddenLayers)
             {
-                if (_dropoutOptions.DropoutLayerIndices.Contains(layerIndex))
-                {
-                    hiddenLayer.ComputeLayerOutputWithDropouts(
-                        _dropoutOptions.ProbabilityOfNeuronDropout, NetworkRandom);
-                }
-                else
-                {
-                    hiddenLayer.ComputeFullLayerOutput();
-                }
-
-                layerIndex++;
+                hiddenLayer.ComputeLayerOutput();
             }
 
             List<double> output = new List<double>();
-
-            if (_dropoutOptions.DropoutLayerIndices.Contains(layerIndex))
-            {
-                OutputLayer.ComputeLayerOutputWithDropouts(_dropoutOptions.ProbabilityOfNeuronDropout,
-                    NetworkRandom);
-            }
-            else
-            {
-                OutputLayer.ComputeFullLayerOutput();
-            }
+            output.AddRange(OutputLayer.ComputeLayerOutput());
 
             return output.ToArray();
         }
