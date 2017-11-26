@@ -64,16 +64,17 @@ namespace MLP
 
         public double[] ComputeLayerTrainingOutput()
         {
-            List<double> output = new List<double>();
+            double[] output = new double[Neurons.Count];
 
             for (int n = 0; n < Neurons.Count; n++)
             {
                 Neuron neuron = Neurons[n];
                 double dropOutBit = DropOutMask[n];
 
-                output.Add(neuron.ComputeTrainingOutput(dropOutBit));
-            }
-            return output.ToArray();
+                output[n] = neuron.ComputeTrainingOutput(dropOutBit);
+            };
+
+            return output;
         }
     }
 }

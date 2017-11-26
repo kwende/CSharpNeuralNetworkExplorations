@@ -124,11 +124,12 @@ namespace SimpleMLP
             List<TrainingData> testData = BuildTrainingDataFromMNIST(
                 "t10k-labels.idx1-ubyte", "t10k-images.idx3-ubyte");
 
-            //trainingData = trainingData.Take(5000).ToList();
+            trainingData = trainingData.Take(5000).ToList();
 
             double totalAccuracy = 0.0;
             const int NumberOfIterations = 1;
 
+            DateTime start = DateTime.Now;
             for (int c = 0; c < NumberOfIterations; c++)
             {
                 Random rand = new Random(1234);
@@ -137,18 +138,18 @@ namespace SimpleMLP
                     rand,
                     new Math.CostFunctions.CrossEntropyCostFunction(),
                     new Math.RegularizationFunctions.L2Normalization(.1),
-                    new DropoutLayerOptions(0),
+                    new DropoutLayerOptions(.1, 1),
                     784, 10, 30);
 
                 NetworkTrainer networkTrainer = new NetworkTrainer();
                 networkTrainer.Train(network,
                     trainingData,
-                    .1, 60, 2, OnLearningProgress);
+                    .025, 30, 5, OnLearningProgress);
 
                 totalAccuracy += networkTrainer.Test(network, testData) * 100.0;
             }
 
-            Console.WriteLine($"Accurancy: {(totalAccuracy / (NumberOfIterations * 1.0)).ToString("000.00")}%");
+            Console.WriteLine($"Accurancy: {(totalAccuracy / (NumberOfIterations * 1.0)).ToString("000.00")}% in {(DateTime.Now - start).TotalSeconds} seconds.");
 
             return;
         }
