@@ -124,7 +124,7 @@ namespace SimpleMLP
             List<TrainingData> testData = BuildTrainingDataFromMNIST(
                 "t10k-labels.idx1-ubyte", "t10k-images.idx3-ubyte");
 
-            trainingData = trainingData.Take(5000).ToList();
+            //trainingData = trainingData.Take(5000).ToList();
 
             double totalAccuracy = 0.0;
             const int NumberOfIterations = 1;
@@ -144,7 +144,7 @@ namespace SimpleMLP
                 NetworkTrainer networkTrainer = new NetworkTrainer();
                 networkTrainer.Train(network,
                     trainingData,
-                    .025, 30, 5, OnLearningProgress);
+                    .25, 60, 2, OnLearningProgress);
 
                 totalAccuracy += networkTrainer.Test(network, testData) * 100.0;
             }
