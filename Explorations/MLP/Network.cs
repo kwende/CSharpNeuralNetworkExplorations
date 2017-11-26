@@ -92,8 +92,10 @@ namespace MLP
 
                     neuron.Bias = neuron.Bias - (stepSize * delta);
 
-                    foreach (Dendrite dendrite in neuron.UpstreamDendrites)
+                    //foreach (Dendrite dendrite in neuron.UpstreamDendrites)
+                    for (int d = 0; d < neuron.UpstreamDendrites.Count; d++)
                     {
+                        Dendrite dendrite = neuron.UpstreamDendrites[d]; 
                         Neuron upstreamNeuron = (Neuron)dendrite.UpStreamNeuron;
                         double changeInErrorRelativeToWeight =
                             (delta * upstreamNeuron.Activation);

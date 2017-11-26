@@ -97,13 +97,21 @@ namespace SimpleMLP
             return ret;
         }
 
+        static int _lastEpoch = -1;
+
         static void OnLearningProgress(LearningProgress progress)
         {
-            if (progress.Counter % 100 == 0)
+            if (_lastEpoch != progress.Epoch)
             {
-                //Console.WriteLine($"Epoch {progress.Epoch}, Batch {progress.BatchNumber}, Error {progress.CurrentNetworkError}");
-                File.AppendAllText("c:/users/ben/desktop/learningRate_smallDropOut.csv", $"{progress.CurrentNetworkError}\n");
+                _lastEpoch = progress.Epoch;
+
+                Console.WriteLine($"Epoch {_lastEpoch}");
             }
+            //if (progress.Counter % 100 == 0)
+            //{
+            //    //Console.WriteLine($"Epoch {progress.Epoch}, Batch {progress.BatchNumber}, Error {progress.CurrentNetworkError}");
+            //    File.AppendAllText("c:/users/ben/desktop/learningRate_smallDropOut.csv", $"{progress.CurrentNetworkError}\n");
+            //}
         }
 
         static void Main(string[] args)
@@ -116,36 +124,31 @@ namespace SimpleMLP
             List<TrainingData> testData = BuildTrainingDataFromMNIST(
                 "t10k-labels.idx1-ubyte", "t10k-images.idx3-ubyte");
 
-            trainingData = trainingData.Take(5000).ToList();
-            Random rand = new Random(1234);
+            //trainingData = trainingData.Take(5000).ToList();
 
-            double[] lambdas = new double[10] { 0, .1, .2, .3, .4, .5, .6, .7, .8, .9 }; 
-            for(int l=0;l<lambdas.Length;l++)
+            double totalAccuracy = 0.0;
+            const int NumberOfIterations = 1;
+
+            for (int c = 0; c < NumberOfIterations; c++)
             {
+                Random rand = new Random(1234);
+
                 Network network = Network.BuildNetwork(
                     rand,
                     new Math.CostFunctions.CrossEntropyCostFunction(),
-                    new Math.RegularizationFunctions.L2Normalization(0),
-                    new DropoutLayerOptions(lambdas[l], 1),
+                    new Math.RegularizationFunctions.L2Normalization(.1),
+                    new DropoutLayerOptions(0),
                     784, 10, 30);
 
-                double totalAccuracy = 0.0;
+                NetworkTrainer networkTrainer = new NetworkTrainer();
+                networkTrainer.Train(network,
+                    trainingData,
+                    .1, 60, 2, OnLearningProgress);
 
-                const int NumberOfIterations = 10;
-
-                for (int c = 0; c < NumberOfIterations; c++)
-                {
-                    NetworkTrainer networkTrainer = new NetworkTrainer();
-                    networkTrainer.Train(network,
-                        trainingData,
-                        .25, 30, 5, OnLearningProgress);
-
-                    totalAccuracy += networkTrainer.Test(network, testData) * 100.0;
-                }
-
-                Console.WriteLine($"Lambads: {lambdas[l]} Accurancy: {(totalAccuracy / (NumberOfIterations * 1.0)).ToString("000.00")}%");
-
+                totalAccuracy += networkTrainer.Test(network, testData) * 100.0;
             }
+
+            Console.WriteLine($"Accurancy: {(totalAccuracy / (NumberOfIterations * 1.0)).ToString("000.00")}%");
 
             return;
         }
