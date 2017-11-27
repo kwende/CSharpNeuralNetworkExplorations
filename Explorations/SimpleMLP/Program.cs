@@ -114,6 +114,13 @@ namespace SimpleMLP
             //}
         }
 
+        static void OnValidationDataUpdate(double accuracy)
+        {
+            Console.WriteLine($"\tValidation accuracy {(accuracy * 100.0).ToString("000.00")}");
+            File.AppendAllText("C:/users/brush/desktop/validation.csv",
+                $"{1 - accuracy}\n");
+        }
+
         static void Main(string[] args)
         {
             // What I cannot create, I do not understand. 
@@ -125,6 +132,18 @@ namespace SimpleMLP
                 "t10k-labels.idx1-ubyte", "t10k-images.idx3-ubyte");
 
             //trainingData = trainingData.Take(5000).ToList();
+            List<TrainingData> validationData = new List<TrainingData>();
+            const int SizeOfValidationData = 10000;
+            for (int c = 0; c < SizeOfValidationData; c++)
+            {
+                validationData.Add(trainingData[0]);
+                trainingData.RemoveAt(0);
+            }
+            ValidationDataOptions validationDataOptions = new ValidationDataOptions
+            {
+                NumberOfEpochsBetweenTests = 1,
+                ValidationData = validationData,
+            };
 
             double totalAccuracy = 0.0;
             const int NumberOfIterations = 1;
@@ -137,14 +156,17 @@ namespace SimpleMLP
                 Network network = Network.BuildNetwork(
                     rand,
                     new Math.CostFunctions.CrossEntropyCostFunction(),
-                    new Math.RegularizationFunctions.L2Normalization(.1),
-                    new DropoutLayerOptions(.1, 1),
-                    784, 10, 30);
+                    null, //new Math.RegularizationFunctions.L2Normalization(.1),
+                    new DropoutLayerOptions(0),
+                    784, 10, 30, 15);
 
                 NetworkTrainer networkTrainer = new NetworkTrainer();
                 networkTrainer.Train(network,
                     trainingData,
-                    .25, 60, 2, OnLearningProgress);
+                    .25, 30, 2,
+                    validationDataOptions,
+                    OnLearningProgress,
+                    OnValidationDataUpdate);
 
                 totalAccuracy += networkTrainer.Test(network, testData) * 100.0;
             }

@@ -14,7 +14,9 @@ namespace MLP
     {
         public void Train(Network network, List<TrainingData> trainingData,
             double stepSize, int numberOfEpochs,
-            int batchSize, Action<LearningProgress> onLearningProgres)
+            int batchSize, ValidationDataOptions validationOptions,
+            Action<LearningProgress> onLearningProgress,
+            Action<double> onValidationDataReport)
         {
             int trainingDataLength = trainingData.Count;
 
@@ -40,9 +42,9 @@ namespace MLP
                         outputError += network.Backpropagation(data.Y);
                     };
 
-                    if (onLearningProgres != null)
+                    if (onLearningProgress != null)
                     {
-                        onLearningProgres(new LearningProgress
+                        onLearningProgress(new LearningProgress
                         {
                             BatchNumber = b,
                             Epoch = epoch,
@@ -52,6 +54,15 @@ namespace MLP
                     }
                     // update the network. 
                     network.UpdateNetwork(stepSize, trainingDataLength);
+                }
+
+                if (validationOptions != null && onValidationDataReport != null)
+                {
+                    if ((epoch + 1) % validationOptions.NumberOfEpochsBetweenTests == 0)
+                    {
+                        double accuracy = Test(network, validationOptions.ValidationData);
+                        onValidationDataReport(accuracy);
+                    }
                 }
             }
         }
