@@ -71,7 +71,7 @@ namespace MLP
             return network;
         }
 
-        public void UpdateNetwork(double stepSize, int sizeOfTrainingData)
+        public void UpdateNetwork(double stepSize, int sizeOfTrainingData, int batchSize)
         {
             List<Layer> layersToUpdate = new List<Layer>();
             foreach (HiddenLayer hiddenLayer in HiddenLayers)
@@ -87,8 +87,8 @@ namespace MLP
                     Neuron neuron = layersToUpdate[c].Neurons[n];
                     bool isNeuronDropped = layersToUpdate[c].DropOutMask[n] == 0;
 
-                    double biasDelta = neuron.BatchErrorsWrtBias.Average();
-                    neuron.BatchErrorsWrtBias.Clear();
+                    double biasDelta = neuron.SumOfErrorsOfNeuron /= (batchSize * 1.0);
+                    neuron.ClearError();
 
                     neuron.Bias = neuron.Bias - (stepSize * biasDelta);
 
@@ -96,12 +96,8 @@ namespace MLP
                     {
                         Dendrite dendrite = neuron.UpstreamDendrites[d];
 
-                        double averageErrorWrtWeight = 0.0;
-                        for (int e = 0; e < dendrite.BatchErrorsWrtWeights.Count; e++)
-                        {
-                            averageErrorWrtWeight += dendrite.BatchErrorsWrtWeights[e];
-                        }
-                        averageErrorWrtWeight /= (dendrite.BatchErrorsWrtWeights.Count * 1.0);
+                        double averageErrorWrtWeight = dendrite.SumOfErrorsWrtWeights / (batchSize * 1.0);
+                        dendrite.ClearError();
 
                         double regularization = 0.0;
                         if (_regularizationFunction != null && !isNeuronDropped)
@@ -111,8 +107,6 @@ namespace MLP
 
                         dendrite.Weight = dendrite.Weight -
                             (stepSize * (averageErrorWrtWeight + regularization));
-
-                        dendrite.BatchErrorsWrtWeights.Clear();
                     }
                 }
             }
@@ -120,7 +114,7 @@ namespace MLP
 
         public double Backpropagation(double[] expectedValues)
         {
-            double totalNetworkError = 0.0;
+            double totalNetworkCost = 0.0;
             // Compute error for the output neurons to get the ball rolling. 
             // See https://github.com/kwende/CSharpNeuralNetworkExplorations/blob/master/Explorations/SimpleMLP/Documentation/OutputNeuronErrors.png
             for (int d = 0; d < expectedValues.Length; d++)
@@ -130,24 +124,23 @@ namespace MLP
                 double actualOutput = outputNeuronBeingExamined.Activation;
                 double actualInput = outputNeuronBeingExamined.TotalInput;
 
-                double error = _costFunction.Compute(expectedOutput, actualOutput);
-                totalNetworkError += error;
+                double cost = _costFunction.Compute(expectedOutput, actualOutput);
+                totalNetworkCost += cost;
 
-                double changeInErrorRelativeToActivation =
+                double errorRelativeToActivation =
                     (_costFunction.ComputeDerivativeWRTActivation(actualOutput, expectedOutput));
 
-                double delta = changeInErrorRelativeToActivation *
-                    Math.Sigmoid.ComputeDerivative(actualInput);
+                double errorWrtToNeuron = errorRelativeToActivation * Math.Sigmoid.ComputeDerivative(actualInput);
 
-                outputNeuronBeingExamined.BatchErrorsWrtBias.Add(delta);
+                outputNeuronBeingExamined.AddError(errorWrtToNeuron);
 
                 for (int e = 0; e < outputNeuronBeingExamined.UpstreamDendrites.Count; e++)
                 {
                     Dendrite dendrite = outputNeuronBeingExamined.UpstreamDendrites[e];
                     Neuron upstreamNeuron = (Neuron)dendrite.UpStreamNeuron;
-                    double errorRelativeToWeight = (delta * upstreamNeuron.Activation);
+                    double errorRelativeToWeight = (errorWrtToNeuron * upstreamNeuron.Activation);
 
-                    dendrite.BatchErrorsWrtWeights.Add(errorRelativeToWeight);
+                    dendrite.AddError(errorRelativeToWeight);
                 }
             }
 
@@ -157,40 +150,40 @@ namespace MLP
                 HiddenLayer hiddenLayer = HiddenLayers[d];
                 for (int e = 0; e < hiddenLayer.Neurons.Count; e++)
                 {
-                    Neuron thisLayerNeuron = (Neuron)hiddenLayer.Neurons[e];
+                    Neuron thisNeuron = (Neuron)hiddenLayer.Neurons[e];
                     double dropoutBit = hiddenLayer.DropOutMask[e];
 
-                    double input = thisLayerNeuron.TotalInput;
+                    double input = thisNeuron.TotalInput;
 
                     double errorSum = 0.0;
-                    List<Dendrite> downStreamDendrites = thisLayerNeuron.DownstreamDendrites;
+                    List<Dendrite> downStreamDendrites = thisNeuron.DownstreamDendrites;
 
                     for (int f = 0; f < downStreamDendrites.Count; f++)
                     {
                         Dendrite currentDendrite = downStreamDendrites[f];
                         Neuron downStreamNeuron = currentDendrite.DownStreamNeuron;
 
-                        double delta = downStreamNeuron.BatchErrorsWrtBias.Last();
+                        double delta = downStreamNeuron.CurrentNeuronError;
                         double weight = currentDendrite.Weight;
                         errorSum += delta * weight;
                     }
 
-                    double error = errorSum * Math.Sigmoid.ComputeDerivative(input) * dropoutBit;
+                    double errorWrtToThisNeuron = errorSum * Math.Sigmoid.ComputeDerivative(input) * dropoutBit;
 
-                    thisLayerNeuron.BatchErrorsWrtBias.Add(error);
+                    thisNeuron.AddError(errorWrtToThisNeuron);
 
-                    for (int f = 0; f < thisLayerNeuron.UpstreamDendrites.Count; f++)
+                    for (int f = 0; f < thisNeuron.UpstreamDendrites.Count; f++)
                     {
-                        Dendrite dendrite = thisLayerNeuron.UpstreamDendrites[f];
+                        Dendrite dendrite = thisNeuron.UpstreamDendrites[f];
                         Neuron upstreamNeuron = (Neuron)dendrite.UpStreamNeuron;
-                        double errorRelativeToWeight = (error * upstreamNeuron.Activation);
+                        double errorRelativeToWeight = (errorWrtToThisNeuron * upstreamNeuron.Activation);
 
-                        dendrite.BatchErrorsWrtWeights.Add(errorRelativeToWeight);
+                        dendrite.AddError(errorRelativeToWeight);
                     }
                 }
             }
 
-            return totalNetworkError;
+            return totalNetworkCost;
         }
 
         public double[] Execute(double[] inputs)

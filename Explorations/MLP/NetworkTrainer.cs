@@ -70,7 +70,7 @@ namespace MLP
                         });
                     }
                     // update the network. 
-                    network.UpdateNetwork(stepSize, trainingDataLength);
+                    network.UpdateNetwork(stepSize, trainingDataLength, batch.Size);
                 }
 
                 if (validationOptions != null && onValidationDataReport != null)
@@ -93,12 +93,12 @@ namespace MLP
 
                 int classFromOutputs = ClassFromOutputs(outputs);
 
-                if (!Directory.Exists($"C:/users/brush/desktop/Groups/{classFromOutputs}"))
-                {
-                    Directory.CreateDirectory($"C:/users/brush/desktop/Groups/{classFromOutputs}");
-                }
+                //if (!Directory.Exists($"C:/users/brush/desktop/Groups/{classFromOutputs}"))
+                //{
+                //    Directory.CreateDirectory($"C:/users/brush/desktop/Groups/{classFromOutputs}");
+                //}
 
-                WriteTrainingDataToDisk(testData, $"C:/users/brush/desktop/Groups/{classFromOutputs}/{Guid.NewGuid().ToString().Replace("-", "")}.bmp"); 
+                //WriteTrainingDataToDisk(testData, $"C:/users/brush/desktop/Groups/{classFromOutputs}/{Guid.NewGuid().ToString().Replace("-", "")}.bmp"); 
 
                 if (EquivalentOutputs(outputs, testData.Y))
                 {

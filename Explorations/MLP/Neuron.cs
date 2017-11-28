@@ -23,14 +23,15 @@ namespace MLP
         public List<Dendrite> DownstreamDendrites { get; set; }
         public double TotalInput { get; set; }
         public double Activation { get; set; }
-        public List<double> BatchErrorsWrtBias { get; set; }
+        public double SumOfErrorsOfNeuron { get; set; }
+        public double CurrentNeuronError { get; set; }
         public string UniqueName { get; private set; }
 
         private Neuron()
         {
             UpstreamDendrites = new List<Dendrite>();
             DownstreamDendrites = new List<Dendrite>();
-            BatchErrorsWrtBias = new List<double>(1000);
+            SumOfErrorsOfNeuron = 0.0;
             UniqueName = GetNextUniqueId().ToString();
         }
 
@@ -51,6 +52,18 @@ namespace MLP
             }
 
             return Activation;
+        }
+
+        public void AddError(double error)
+        {
+            CurrentNeuronError = error;
+            SumOfErrorsOfNeuron += error;
+        }
+
+        public void ClearError()
+        {
+            CurrentNeuronError = 0.0;
+            SumOfErrorsOfNeuron = 0.0;
         }
 
         public double ComputeTrainingOutput(double dropOutBit = 1)

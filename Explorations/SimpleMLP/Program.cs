@@ -150,7 +150,7 @@ namespace SimpleMLP
                 NetworkTrainer networkTrainer = new NetworkTrainer();
                 networkTrainer.Train(network,
                     trainingData,
-                    3.0, 30, 10,
+                    .5, 30, 10,
                     validationDataOptions,
                     OnLearningProgress,
                     OnValidationDataUpdate);
