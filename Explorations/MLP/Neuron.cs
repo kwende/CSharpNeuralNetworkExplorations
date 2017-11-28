@@ -23,14 +23,14 @@ namespace MLP
         public List<Dendrite> DownstreamDendrites { get; set; }
         public double TotalInput { get; set; }
         public double Activation { get; set; }
-        public List<double> BatchErrors { get; set; }
+        public List<double> BatchErrorsWrtBias { get; set; }
         public string UniqueName { get; private set; }
 
         private Neuron()
         {
             UpstreamDendrites = new List<Dendrite>();
             DownstreamDendrites = new List<Dendrite>();
-            BatchErrors = new List<double>();
+            BatchErrorsWrtBias = new List<double>();
             UniqueName = GetNextUniqueId().ToString();
         }
 

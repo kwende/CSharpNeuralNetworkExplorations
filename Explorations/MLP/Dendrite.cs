@@ -12,8 +12,11 @@ namespace MLP
         public Neuron UpStreamNeuron { get; set; }
         public Neuron DownStreamNeuron { get; set; }
         public double Weight { get; set; }
+        public List<double> BatchErrorsWrtWeights { get; set; }
+
         private Dendrite()
         {
+            BatchErrorsWrtWeights = new List<double>();
         }
         public static Dendrite BuildWeight(Neuron upstreamNeuron, Neuron downStreamNeuron, double weight)
         {

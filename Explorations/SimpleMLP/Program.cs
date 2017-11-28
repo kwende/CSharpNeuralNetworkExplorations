@@ -158,12 +158,12 @@ namespace SimpleMLP
                     new Math.CostFunctions.CrossEntropyCostFunction(),
                     null, //new Math.RegularizationFunctions.L2Normalization(.1),
                     new DropoutLayerOptions(0),
-                    784, 10, 30, 15);
+                    784, 10, 30);
 
                 NetworkTrainer networkTrainer = new NetworkTrainer();
                 networkTrainer.Train(network,
                     trainingData,
-                    .25, 30, 2,
+                    3.0, 30, 10,
                     validationDataOptions,
                     OnLearningProgress,
                     OnValidationDataUpdate);

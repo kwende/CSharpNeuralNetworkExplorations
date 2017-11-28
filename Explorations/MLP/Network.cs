@@ -87,18 +87,15 @@ namespace MLP
                     Neuron neuron = layersToUpdate[c].Neurons[n];
                     bool isNeuronDropped = layersToUpdate[c].DropOutMask[n] == 0;
 
-                    double delta = neuron.BatchErrors.Average();
-                    neuron.BatchErrors.Clear();
+                    double biasDelta = neuron.BatchErrorsWrtBias.Average();
+                    neuron.BatchErrorsWrtBias.Clear();
 
-                    neuron.Bias = neuron.Bias - (stepSize * delta);
+                    neuron.Bias = neuron.Bias - (stepSize * biasDelta);
 
-                    //foreach (Dendrite dendrite in neuron.UpstreamDendrites)
                     for (int d = 0; d < neuron.UpstreamDendrites.Count; d++)
                     {
-                        Dendrite dendrite = neuron.UpstreamDendrites[d]; 
-                        Neuron upstreamNeuron = (Neuron)dendrite.UpStreamNeuron;
-                        double changeInErrorRelativeToWeight =
-                            (delta * upstreamNeuron.Activation);
+                        Dendrite dendrite = neuron.UpstreamDendrites[d];
+                        double averageErrorWrtWeight = dendrite.BatchErrorsWrtWeights.Average();
 
                         double regularization = 0.0;
                         if (_regularizationFunction != null && !isNeuronDropped)
@@ -107,7 +104,9 @@ namespace MLP
                         }
 
                         dendrite.Weight = dendrite.Weight -
-                            (stepSize * (changeInErrorRelativeToWeight + regularization));
+                            (stepSize * (averageErrorWrtWeight + regularization));
+
+                        dendrite.BatchErrorsWrtWeights.Clear();
                     }
                 }
             }
@@ -134,7 +133,16 @@ namespace MLP
                 double delta = changeInErrorRelativeToActivation *
                     Math.Sigmoid.ComputeDerivative(actualInput);
 
-                outputNeuronBeingExamined.BatchErrors.Add(delta);
+                outputNeuronBeingExamined.BatchErrorsWrtBias.Add(delta);
+
+                for (int e = 0; e < outputNeuronBeingExamined.UpstreamDendrites.Count; e++)
+                {
+                    Dendrite dendrite = outputNeuronBeingExamined.UpstreamDendrites[e];
+                    Neuron upstreamNeuron = (Neuron)dendrite.UpStreamNeuron;
+                    double errorRelativeToWeight = (delta * upstreamNeuron.Activation);
+
+                    dendrite.BatchErrorsWrtWeights.Add(changeInErrorRelativeToActivation);
+                }
             }
 
             // Compute error for each neuron in each layer moving backwards (backprop). 
@@ -156,13 +164,23 @@ namespace MLP
                         Dendrite currentDendrite = downStreamDendrites[f];
                         Neuron downStreamNeuron = currentDendrite.DownStreamNeuron;
 
-                        double delta = downStreamNeuron.BatchErrors.Last();
+                        double delta = downStreamNeuron.BatchErrorsWrtBias.Last();
                         double weight = currentDendrite.Weight;
-                        double error = delta * weight;
-                        errorSum += error;
+                        errorSum += delta * weight;
                     }
 
-                    thisLayerNeuron.BatchErrors.Add(errorSum * Math.Sigmoid.ComputeDerivative(input) * dropoutBit);
+                    double error = errorSum * Math.Sigmoid.ComputeDerivative(input) * dropoutBit;
+
+                    thisLayerNeuron.BatchErrorsWrtBias.Add(error);
+
+                    for (int f = 0; f < thisLayerNeuron.UpstreamDendrites.Count; f++)
+                    {
+                        Dendrite dendrite = thisLayerNeuron.UpstreamDendrites[f];
+                        Neuron upstreamNeuron = (Neuron)dendrite.UpStreamNeuron;
+                        double errorRelativeToWeight = (error * upstreamNeuron.Activation);
+
+                        dendrite.BatchErrorsWrtWeights.Add(error);
+                    }
                 }
             }
 
