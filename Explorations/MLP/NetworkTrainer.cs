@@ -12,6 +12,23 @@ namespace MLP
 {
     public class NetworkTrainer
     {
+        static void WriteTrainingDataToDisk(TrainingData data, string outputFile)
+        {
+            using (Bitmap bmp = new Bitmap(data.XWidth, data.XHeight))
+            {
+                for (int y = 0, i = 0; y < data.XHeight; y++)
+                {
+                    for (int x = 0; x < data.XWidth; x++, i++)
+                    {
+                        byte v = (byte)(data.X[i] * 255);
+                        bmp.SetPixel(x, y, Color.FromArgb(v, v, v));
+                    }
+                }
+
+                bmp.Save(outputFile);
+            }
+        }
+
         public void Train(Network network, List<TrainingData> trainingData,
             double stepSize, int numberOfEpochs,
             int batchSize, ValidationDataOptions validationOptions,
@@ -73,6 +90,15 @@ namespace MLP
             foreach (TrainingData testData in testingData)
             {
                 double[] outputs = network.Execute(testData.X);
+
+                int classFromOutputs = ClassFromOutputs(outputs);
+
+                if (!Directory.Exists($"C:/users/brush/desktop/Groups/{classFromOutputs}"))
+                {
+                    Directory.CreateDirectory($"C:/users/brush/desktop/Groups/{classFromOutputs}");
+                }
+
+                WriteTrainingDataToDisk(testData, $"C:/users/brush/desktop/Groups/{classFromOutputs}/{Guid.NewGuid().ToString().Replace("-", "")}.bmp"); 
 
                 if (EquivalentOutputs(outputs, testData.Y))
                 {

@@ -12,22 +12,7 @@ namespace SimpleMLP
 {
     class Program
     {
-        static void WriteTrainingDataToDisk(TrainingData data, string outputFile)
-        {
-            using (Bitmap bmp = new Bitmap(data.XWidth, data.XHeight))
-            {
-                for (int y = 0, i = 0; y < data.XHeight; y++)
-                {
-                    for (int x = 0; x < data.XWidth; x++, i++)
-                    {
-                        byte v = (byte)(data.X[i] * 255);
-                        bmp.SetPixel(x, y, Color.FromArgb(v, v, v));
-                    }
-                }
 
-                bmp.Save(outputFile);
-            }
-        }
 
         static List<TrainingData> BuildTrainingDataFromMNIST(string labelsFile, string imagesFile)
         {
@@ -130,6 +115,8 @@ namespace SimpleMLP
                 "train-labels.idx1-ubyte", "train-images.idx3-ubyte");
             List<TrainingData> testData = BuildTrainingDataFromMNIST(
                 "t10k-labels.idx1-ubyte", "t10k-images.idx3-ubyte");
+
+            //trainingData = trainingData.Take(5000).ToList();
 
             //trainingData = trainingData.Take(5000).ToList();
             List<TrainingData> validationData = new List<TrainingData>();

@@ -30,7 +30,7 @@ namespace MLP
         {
             UpstreamDendrites = new List<Dendrite>();
             DownstreamDendrites = new List<Dendrite>();
-            BatchErrorsWrtBias = new List<double>();
+            BatchErrorsWrtBias = new List<double>(1000);
             UniqueName = GetNextUniqueId().ToString();
         }
 
@@ -50,7 +50,7 @@ namespace MLP
                 Activation = Math.Sigmoid.Compute(TotalInput);
             }
 
-            return Activation * (1 - probabilityOfDropout);
+            return Activation;
         }
 
         public double ComputeTrainingOutput(double dropOutBit = 1)
@@ -66,10 +66,11 @@ namespace MLP
 
                 TotalInput = (k + Bias);
 
+
                 Activation = Math.Sigmoid.Compute(TotalInput);
             }
 
-            return Activation * dropOutBit;
+            return Activation;
         }
 
         public static Neuron BuildNeuron(Math.RandomNormal rand, Layer previousLayer)

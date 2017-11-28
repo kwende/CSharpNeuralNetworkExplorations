@@ -16,7 +16,7 @@ namespace MLP
 
         private Dendrite()
         {
-            BatchErrorsWrtWeights = new List<double>();
+            BatchErrorsWrtWeights = new List<double>(10000);
         }
         public static Dendrite BuildWeight(Neuron upstreamNeuron, Neuron downStreamNeuron, double weight)
         {

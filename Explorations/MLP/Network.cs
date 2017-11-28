@@ -95,7 +95,13 @@ namespace MLP
                     for (int d = 0; d < neuron.UpstreamDendrites.Count; d++)
                     {
                         Dendrite dendrite = neuron.UpstreamDendrites[d];
-                        double averageErrorWrtWeight = dendrite.BatchErrorsWrtWeights.Average();
+
+                        double averageErrorWrtWeight = 0.0;
+                        for (int e = 0; e < dendrite.BatchErrorsWrtWeights.Count; e++)
+                        {
+                            averageErrorWrtWeight += dendrite.BatchErrorsWrtWeights[e];
+                        }
+                        averageErrorWrtWeight /= (dendrite.BatchErrorsWrtWeights.Count * 1.0);
 
                         double regularization = 0.0;
                         if (_regularizationFunction != null && !isNeuronDropped)
@@ -141,7 +147,7 @@ namespace MLP
                     Neuron upstreamNeuron = (Neuron)dendrite.UpStreamNeuron;
                     double errorRelativeToWeight = (delta * upstreamNeuron.Activation);
 
-                    dendrite.BatchErrorsWrtWeights.Add(changeInErrorRelativeToActivation);
+                    dendrite.BatchErrorsWrtWeights.Add(errorRelativeToWeight);
                 }
             }
 
@@ -179,7 +185,7 @@ namespace MLP
                         Neuron upstreamNeuron = (Neuron)dendrite.UpStreamNeuron;
                         double errorRelativeToWeight = (error * upstreamNeuron.Activation);
 
-                        dendrite.BatchErrorsWrtWeights.Add(error);
+                        dendrite.BatchErrorsWrtWeights.Add(errorRelativeToWeight);
                     }
                 }
             }
