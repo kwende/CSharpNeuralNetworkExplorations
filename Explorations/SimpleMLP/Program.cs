@@ -45,7 +45,7 @@ namespace SimpleMLP
             // ~Richard P. Feynman
 
 
-            ITrainingDataBuilder trainingDataBuilder = new MNISTTrainingDataBuilder();
+            ITrainingDataBuilder trainingDataBuilder = new XORTrainingDataBuilder();
             trainingDataBuilder.BuildTrainingData();
 
             double totalAccuracy = 0.0;
@@ -61,13 +61,13 @@ namespace SimpleMLP
                     new Math.CostFunctions.CrossEntropyCostFunction(),
                     null, //new Math.RegularizationFunctions.L2Normalization(.1),
                     new DropoutLayerOptions(0),
-                    784, 10, 30);
+                    2, 1, 5);
 
                 NetworkTrainer networkTrainer = new NetworkTrainer();
                 networkTrainer.Train(network,
                     trainingDataBuilder,
-                    .5, 30, 10,
-                    1,
+                    .5, 100, 1,
+                    -1,
                     OnLearningProgress,
                     OnValidationDataUpdate);
 
