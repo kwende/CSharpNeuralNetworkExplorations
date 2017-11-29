@@ -73,6 +73,8 @@ namespace MLP
 
         public void UpdateNetwork(double stepSize, int sizeOfTrainingData, int batchSize)
         {
+            // Generate the list of layers to update, starting from the
+            // beginnign to the end (the output layer). 
             List<Layer> layersToUpdate = new List<Layer>();
             foreach (HiddenLayer hiddenLayer in HiddenLayers)
             {
@@ -80,21 +82,29 @@ namespace MLP
             }
             layersToUpdate.Add(OutputLayer);
 
+            // start from the last layer and work my way backward. 
             for (int c = layersToUpdate.Count - 1; c >= 0; c--)
             {
+                // take each of the neurons in the layer and update the bias
+                // take each of the dendrites attached to the neuron and update the weight. 
                 for (int n = 0; n < layersToUpdate[c].Neurons.Count; n++)
                 {
-                    Neuron neuron = layersToUpdate[c].Neurons[n];
+                    // the current neuron being examined. 
+                    Neuron thisNeuron = layersToUpdate[c].Neurons[n];
                     bool isNeuronDropped = layersToUpdate[c].DropOutMask[n] == 0;
 
-                    double biasDelta = neuron.SumOfErrorsOfNeuron /= (batchSize * 1.0);
-                    neuron.ClearError();
+                    // get the sum of all the errors of this neuron across the batch. 
+                    // divide by the batch size. This is the average error for the neuron. 
+                    double averageNeuronError = thisNeuron.SumOfErrorsOfNeuron /= (batchSize * 1.0);
+                    thisNeuron.ClearError();
 
-                    neuron.Bias = neuron.Bias - (stepSize * biasDelta);
+                    // updating the weight is just subtracting the bias (the delta is the gradient 
+                    // of the bias). dC/db = delta. Make sure to weight the delta by the step size. 
+                    thisNeuron.Bias = thisNeuron.Bias - (stepSize * averageNeuronError);
 
-                    for (int d = 0; d < neuron.UpstreamDendrites.Count; d++)
+                    for (int d = 0; d < thisNeuron.UpstreamDendrites.Count; d++)
                     {
-                        Dendrite dendrite = neuron.UpstreamDendrites[d];
+                        Dendrite dendrite = thisNeuron.UpstreamDendrites[d];
 
                         double averageErrorWrtWeight = dendrite.SumOfErrorsWrtWeights / (batchSize * 1.0);
                         dendrite.ClearError();
