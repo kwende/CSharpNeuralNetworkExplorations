@@ -10,7 +10,7 @@ using System.Xml.Serialization;
 namespace MLP
 {
     [Serializable]
-    public class Network
+    public class Network : ITrainedNeuralNetwork
     {
         public InputLayer InputLayer { get; set; }
         public List<HiddenLayer> HiddenLayers { get; set; }

@@ -43,8 +43,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DataStructures\LearningProgress.cs" />
+    <Compile Include="DataStructures\TrainingData.cs" />
     <Compile Include="Interfaces\ICostFunction.cs" />
     <Compile Include="Interfaces\IRegularizationFunction.cs" />
+    <Compile Include="Interfaces\ITrainedNeuralNetwork.cs" />
+    <Compile Include="Interfaces\ITrainingDataBuilder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

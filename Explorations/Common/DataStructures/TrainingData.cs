@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MLP
+namespace Common.DataStructures
 {
     public class TrainingData
     {

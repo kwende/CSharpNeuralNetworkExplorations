@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MLP
+namespace Common.Interfaces
 {
-    public class ValidationDataOptions
+    public interface ITrainedNeuralNetwork
     {
-        public int NumberOfEpochsBetweenTests { get; set; }
+        double[] Execute(double[] inputs);
     }
 }

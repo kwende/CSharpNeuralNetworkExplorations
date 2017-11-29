@@ -1,4 +1,5 @@
 ﻿using Common.DataStructures;
+using Common.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -12,37 +13,37 @@ namespace MLP
 {
     public class NetworkTrainer
     {
-        static void WriteTrainingDataToDisk(TrainingData data, string outputFile)
-        {
-            using (Bitmap bmp = new Bitmap(data.XWidth, data.XHeight))
-            {
-                for (int y = 0, i = 0; y < data.XHeight; y++)
-                {
-                    for (int x = 0; x < data.XWidth; x++, i++)
-                    {
-                        byte v = (byte)(data.X[i] * 255);
-                        bmp.SetPixel(x, y, Color.FromArgb(v, v, v));
-                    }
-                }
+        //static void WriteTrainingDataToDisk(TrainingData data, string outputFile)
+        //{
+        //    using (Bitmap bmp = new Bitmap(data.XWidth, data.XHeight))
+        //    {
+        //        for (int y = 0, i = 0; y < data.XHeight; y++)
+        //        {
+        //            for (int x = 0; x < data.XWidth; x++, i++)
+        //            {
+        //                byte v = (byte)(data.X[i] * 255);
+        //                bmp.SetPixel(x, y, Color.FromArgb(v, v, v));
+        //            }
+        //        }
 
-                bmp.Save(outputFile);
-            }
-        }
+        //        bmp.Save(outputFile);
+        //    }
+        //}
 
-        public void Train(Network network, List<TrainingData> trainingData,
+        public void Train(Network network, ITrainingDataBuilder trainingDataBuilder,
             double stepSize, int numberOfEpochs,
-            int batchSize, ValidationDataOptions validationOptions,
+            int batchSize, int numberOfEpochsBeforeValidating,
             Action<LearningProgress> onLearningProgress,
             Action<double> onValidationDataReport)
         {
-            int trainingDataLength = trainingData.Count;
+            int trainingDataLength = trainingDataBuilder.TrainingData.Count;
 
             int counter = 0;
             for (int epoch = 0; epoch < numberOfEpochs; epoch++)
             {
                 network.UpdateDroputLayers();
 
-                Batch[] batches = Batch.CreateBatches(trainingData, batchSize, network.NetworkRandom);
+                Batch[] batches = Batch.CreateBatches(trainingDataBuilder.TrainingData, batchSize, network.NetworkRandom);
 
                 for (int b = 0; b < batches.Length; b++)
                 {
@@ -73,77 +74,37 @@ namespace MLP
                     network.UpdateNetwork(stepSize, trainingDataLength, batch.Size);
                 }
 
-                if (validationOptions != null && onValidationDataReport != null)
+                if (trainingDataBuilder.ValidationData != null)
                 {
-                    if ((epoch + 1) % validationOptions.NumberOfEpochsBetweenTests == 0)
+                    if ((epoch + 1) % numberOfEpochsBeforeValidating == 0)
                     {
-                        double accuracy = Test(network, validationOptions.ValidationData);
+                        double accuracy = trainingDataBuilder.GradeResults(network, trainingDataBuilder.ValidationData);
                         onValidationDataReport(accuracy);
                     }
                 }
             }
         }
 
-        public double Test(Network network, List<TrainingData> testingData)
-        {
-            int numberCorrect = 0;
-            foreach (TrainingData testData in testingData)
-            {
-                double[] outputs = network.Execute(testData.X);
+        //public double Test(Network network, List<TrainingData> testingData)
+        //{
 
-                int classFromOutputs = ClassFromOutputs(outputs);
+        //}
 
-                //if (!Directory.Exists($"C:/users/brush/desktop/Groups/{classFromOutputs}"))
-                //{
-                //    Directory.CreateDirectory($"C:/users/brush/desktop/Groups/{classFromOutputs}");
-                //}
+        //private int ClassFromOutputs(double[] outputs)
+        //{
+        //    int maxIndex = 0;
+        //    double maxValue = double.MinValue;
 
-                //WriteTrainingDataToDisk(testData, $"C:/users/brush/desktop/Groups/{classFromOutputs}/{Guid.NewGuid().ToString().Replace("-", "")}.bmp"); 
+        //    for (int c = 0; c < outputs.Length; c++)
+        //    {
+        //        if (outputs[c] > maxValue)
+        //        {
+        //            maxValue = outputs[c];
+        //            maxIndex = c;
+        //        }
+        //    }
 
-                if (EquivalentOutputs(outputs, testData.Y))
-                {
-                    numberCorrect++;
-                }
-            }
-
-            return numberCorrect / (testingData.Count * 1.0);
-        }
-
-        private int ClassFromOutputs(double[] outputs)
-        {
-            int maxIndex = 0;
-            double maxValue = double.MinValue;
-
-            for (int c = 0; c < outputs.Length; c++)
-            {
-                if (outputs[c] > maxValue)
-                {
-                    maxValue = outputs[c];
-                    maxIndex = c;
-                }
-            }
-
-            return maxIndex;
-        }
-
-        private bool EquivalentOutputs(double[] y1, double[] y2)
-        {
-            bool equal = true;
-
-            for (int c = 0; c < y1.Length; c++)
-            {
-                double y1Val = y1[c];
-                double y2Val = y2[c];
-
-                if ((y1Val >= .5 && y2Val < .5) ||
-                    (y1Val < .5 && y2Val >= .5))
-                {
-                    equal = false;
-                    break;
-                }
-            }
-
-            return equal;
-        }
+        //    return maxIndex;
+        //}
     }
 }
