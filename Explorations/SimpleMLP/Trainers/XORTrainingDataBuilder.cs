@@ -22,6 +22,12 @@ namespace SimpleMLP.Trainers
 
             trainingData.Add(new TrainingData
             {
+                X = new double[2] { 0, 0 },
+                Y = new double[1] { 0 },
+            });
+
+            trainingData.Add(new TrainingData
+            {
                 X = new double[2] { 0, 1 },
                 Y = new double[1] { 1 },
             });
@@ -35,12 +41,6 @@ namespace SimpleMLP.Trainers
             trainingData.Add(new TrainingData
             {
                 X = new double[2] { 1, 1 },
-                Y = new double[1] { 0 },
-            });
-
-            trainingData.Add(new TrainingData
-            {
-                X = new double[2] { 0, 0 },
                 Y = new double[1] { 0 },
             });
 

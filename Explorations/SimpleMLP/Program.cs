@@ -39,6 +39,40 @@ namespace SimpleMLP
             //    $"{1 - accuracy}\n");
         }
 
+        static void FuckWithWeights(Network network)
+        {
+            double[] dendriteLayer1Neuron1Weights = new double[] { 0.84533894, 0.1411531, -0.82702529, -0.32890284, -0.30211765 };
+
+            for (int c = 0; c < dendriteLayer1Neuron1Weights.Length; c++)
+            {
+                network.InputLayer.Neurons[0].DownstreamDendrites[c].Weight = dendriteLayer1Neuron1Weights[c];
+            }
+
+            double[] dendriteLayer1Neuron2Weights = new double[] { 0.22878778, 0.52066827, 0.36470008, 0.58120799, 0.36399436 };
+
+            for (int c = 0; c < dendriteLayer1Neuron2Weights.Length; c++)
+            {
+                network.InputLayer.Neurons[1].DownstreamDendrites[c].Weight = dendriteLayer1Neuron2Weights[c];
+            }
+
+            foreach (Neuron neuron in network.HiddenLayers[0].Neurons)
+            {
+                neuron.Bias = 0;
+            }
+
+            double[] dendriteLayer2Neuron1Weights = new double[] { -0.07539773, -0.42560107, -0.93782991, 0.95553482, -0.41024405 };
+
+            for (int c = 0; c < dendriteLayer2Neuron1Weights.Length; c++)
+            {
+                network.OutputLayer.Neurons[0].UpstreamDendrites[c].Weight = dendriteLayer2Neuron1Weights[c];
+            }
+
+            foreach (Neuron neuron in network.OutputLayer.Neurons)
+            {
+                neuron.Bias = 0;
+            }
+        }
+
         static void Main(string[] args)
         {
             // What I cannot create, I do not understand. 
@@ -54,14 +88,16 @@ namespace SimpleMLP
             DateTime start = DateTime.Now;
             for (int c = 0; c < NumberOfIterations; c++)
             {
-                Random rand = new Random();
+                Random rand = new Random(100);
 
                 Network network = Network.BuildNetwork(
                     rand,
-                    new Math.CostFunctions.CrossEntropyCostFunction(),
+                    new Math.CostFunctions.MeanSquaredErrorCostFunction(),
                     null, //new Math.RegularizationFunctions.L2Normalization(.1),
                     new DropoutLayerOptions(0),
                     2, 1, 5);
+
+                FuckWithWeights(network);
 
                 NetworkTrainer networkTrainer = new NetworkTrainer();
                 networkTrainer.Train(network,
