@@ -19,12 +19,12 @@ namespace SimpleMLP
 
         static void OnLearningProgress(LearningProgress progress)
         {
-            if (_lastEpoch != progress.Epoch)
-            {
-                _lastEpoch = progress.Epoch;
+            //if (_lastEpoch != progress.Epoch)
+            //{
+            //    _lastEpoch = progress.Epoch;
 
-                Console.WriteLine($"Epoch {_lastEpoch}");
-            }
+            //    Console.WriteLine($"Epoch {_lastEpoch}");
+            //}
             //if (progress.Counter % 100 == 0)
             //{
             //    //Console.WriteLine($"Epoch {progress.Epoch}, Batch {progress.BatchNumber}, Error {progress.CurrentNetworkError}");
@@ -41,36 +41,32 @@ namespace SimpleMLP
 
         static void FuckWithWeights(Network network)
         {
-            double[] dendriteLayer1Neuron1Weights = new double[] { 0.84533894, 0.1411531, -0.82702529, -0.32890284, -0.30211765 };
+            network.HiddenLayers[0].Neurons[0].Bias = -1.74976547;
+            network.HiddenLayers[0].Neurons[0].UpstreamDendrites[0].Weight = 0.22117967;
+            network.HiddenLayers[0].Neurons[0].UpstreamDendrites[1].Weight = -1.07004333;
 
-            for (int c = 0; c < dendriteLayer1Neuron1Weights.Length; c++)
-            {
-                network.InputLayer.Neurons[0].DownstreamDendrites[c].Weight = dendriteLayer1Neuron1Weights[c];
-            }
+            network.HiddenLayers[0].Neurons[1].Bias = 0.3426804;
+            network.HiddenLayers[0].Neurons[1].UpstreamDendrites[0].Weight = -0.18949583;
+            network.HiddenLayers[0].Neurons[1].UpstreamDendrites[1].Weight = 0.25500144;
 
-            double[] dendriteLayer1Neuron2Weights = new double[] { 0.22878778, 0.52066827, 0.36470008, 0.58120799, 0.36399436 };
+            network.HiddenLayers[0].Neurons[2].Bias = 1.1530358;
+            network.HiddenLayers[0].Neurons[2].UpstreamDendrites[0].Weight = -0.45802699;
+            network.HiddenLayers[0].Neurons[2].UpstreamDendrites[1].Weight = 0.43516349;
 
-            for (int c = 0; c < dendriteLayer1Neuron2Weights.Length; c++)
-            {
-                network.InputLayer.Neurons[1].DownstreamDendrites[c].Weight = dendriteLayer1Neuron2Weights[c];
-            }
+            network.HiddenLayers[0].Neurons[3].Bias = -0.25243604;
+            network.HiddenLayers[0].Neurons[3].UpstreamDendrites[0].Weight = -0.58359505;
+            network.HiddenLayers[0].Neurons[3].UpstreamDendrites[1].Weight = 0.81684707;
 
-            foreach (Neuron neuron in network.HiddenLayers[0].Neurons)
-            {
-                neuron.Bias = 0;
-            }
+            network.HiddenLayers[0].Neurons[4].Bias = 0.98132079;
+            network.HiddenLayers[0].Neurons[4].UpstreamDendrites[0].Weight = 0.67272081;
+            network.HiddenLayers[0].Neurons[4].UpstreamDendrites[1].Weight = -0.10441114;
 
-            double[] dendriteLayer2Neuron1Weights = new double[] { -0.07539773, -0.42560107, -0.93782991, 0.95553482, -0.41024405 };
-
-            for (int c = 0; c < dendriteLayer2Neuron1Weights.Length; c++)
-            {
-                network.OutputLayer.Neurons[0].UpstreamDendrites[c].Weight = dendriteLayer2Neuron1Weights[c];
-            }
-
-            foreach (Neuron neuron in network.OutputLayer.Neurons)
-            {
-                neuron.Bias = 0;
-            }
+            network.OutputLayer.Neurons[0].Bias = 0.51421884;
+            network.OutputLayer.Neurons[0].UpstreamDendrites[0].Weight = -0.53128038;
+            network.OutputLayer.Neurons[0].UpstreamDendrites[1].Weight = 1.02973269;
+            network.OutputLayer.Neurons[0].UpstreamDendrites[2].Weight = -0.43813562;
+            network.OutputLayer.Neurons[0].UpstreamDendrites[3].Weight = -1.11831825;
+            network.OutputLayer.Neurons[0].UpstreamDendrites[4].Weight = 1.61898166;
         }
 
         static void Main(string[] args)
@@ -88,7 +84,7 @@ namespace SimpleMLP
             DateTime start = DateTime.Now;
             for (int c = 0; c < NumberOfIterations; c++)
             {
-                Random rand = new Random(100);
+                Random rand = new Random();
 
                 Network network = Network.BuildNetwork(
                     rand,
@@ -97,12 +93,12 @@ namespace SimpleMLP
                     new DropoutLayerOptions(0),
                     2, 1, 5);
 
-                FuckWithWeights(network);
+                //FuckWithWeights(network);
 
                 NetworkTrainer networkTrainer = new NetworkTrainer();
                 networkTrainer.Train(network,
                     trainingDataBuilder,
-                    .5, 100, 1,
+                    .5, 125, 1,
                     -1,
                     OnLearningProgress,
                     OnValidationDataUpdate);

@@ -142,6 +142,11 @@ namespace MLP
 
                 double errorWrtToNeuron = errorRelativeToActivation * Math.Sigmoid.ComputeDerivative(actualInput);
 
+
+                //Console.WriteLine($"Neuron {outputNeuronBeingExamined}"); 
+
+                //Console.WriteLine($"\tBias error: {errorWrtToNeuron}");
+                //Console.WriteLine("\tWeight errors:"); 
                 outputNeuronBeingExamined.AddError(errorWrtToNeuron);
 
                 for (int e = 0; e < outputNeuronBeingExamined.UpstreamDendrites.Count; e++)
@@ -151,8 +156,11 @@ namespace MLP
                     double errorRelativeToWeight = (errorWrtToNeuron * upstreamNeuron.Activation);
 
                     dendrite.AddError(errorRelativeToWeight);
+                    //Console.WriteLine("\t\t" + errorRelativeToWeight.ToString());
                 }
             }
+
+            //Console.WriteLine(); 
 
             // Compute error for each neuron in each layer moving backwards (backprop). 
             for (int d = HiddenLayers.Count - 1; d >= 0; d--)
@@ -180,14 +188,18 @@ namespace MLP
 
                     double errorWrtToThisNeuron = errorSum * Math.Sigmoid.ComputeDerivative(input) * dropoutBit;
 
+                    //Console.WriteLine($"Neuron {thisNeuron}"); 
+                    //Console.WriteLine($"\tBias error: {errorWrtToThisNeuron}"); 
+
                     thisNeuron.AddError(errorWrtToThisNeuron);
 
+                    //Console.WriteLine($"\tWeight errors:"); 
                     for (int f = 0; f < thisNeuron.UpstreamDendrites.Count; f++)
                     {
                         Dendrite dendrite = thisNeuron.UpstreamDendrites[f];
                         Neuron upstreamNeuron = (Neuron)dendrite.UpStreamNeuron;
                         double errorRelativeToWeight = (errorWrtToThisNeuron * upstreamNeuron.Activation);
-
+                        //Console.WriteLine($"\t\t{errorRelativeToWeight}"); 
                         dendrite.AddError(errorRelativeToWeight);
                     }
                 }
@@ -231,11 +243,14 @@ namespace MLP
 
         public double[] Feedforward(double[] x)
         {
+            //Console.WriteLine("Activations on " + string.Join(",", x) + ":");
+
             for (int d = 0; d < x.Length; d++)
             {
                 (InputLayer.Neurons[d]).Activation = x[d];
             }
 
+            //Console.WriteLine("Hidden layer: ");
             foreach (HiddenLayer hiddenLayer in HiddenLayers)
             {
                 hiddenLayer.ComputeLayerTrainingOutput();
@@ -243,7 +258,6 @@ namespace MLP
 
             List<double> output = new List<double>();
             output.AddRange(OutputLayer.ComputeLayerTrainingOutput());
-
             return output.ToArray();
         }
     }

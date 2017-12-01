@@ -79,7 +79,6 @@ namespace MLP
 
                 TotalInput = (k + Bias);
 
-
                 Activation = Math.Sigmoid.Compute(TotalInput);
             }
 
