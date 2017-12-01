@@ -39,35 +39,35 @@ namespace SimpleMLP
             //    $"{1 - accuracy}\n");
         }
 
-        static void FuckWithWeights(Network network)
-        {
-            network.HiddenLayers[0].Neurons[0].Bias = -1.74976547;
-            network.HiddenLayers[0].Neurons[0].UpstreamDendrites[0].Weight = 0.22117967;
-            network.HiddenLayers[0].Neurons[0].UpstreamDendrites[1].Weight = -1.07004333;
+        //static void FuckWithWeights(Network network)
+        //{
+        //    network.HiddenLayers[0].Neurons[0].Bias = -1.74976547;
+        //    network.HiddenLayers[0].Neurons[0].UpstreamDendrites[0].Weight = 0.22117967;
+        //    network.HiddenLayers[0].Neurons[0].UpstreamDendrites[1].Weight = -1.07004333;
 
-            network.HiddenLayers[0].Neurons[1].Bias = 0.3426804;
-            network.HiddenLayers[0].Neurons[1].UpstreamDendrites[0].Weight = -0.18949583;
-            network.HiddenLayers[0].Neurons[1].UpstreamDendrites[1].Weight = 0.25500144;
+        //    network.HiddenLayers[0].Neurons[1].Bias = 0.3426804;
+        //    network.HiddenLayers[0].Neurons[1].UpstreamDendrites[0].Weight = -0.18949583;
+        //    network.HiddenLayers[0].Neurons[1].UpstreamDendrites[1].Weight = 0.25500144;
 
-            network.HiddenLayers[0].Neurons[2].Bias = 1.1530358;
-            network.HiddenLayers[0].Neurons[2].UpstreamDendrites[0].Weight = -0.45802699;
-            network.HiddenLayers[0].Neurons[2].UpstreamDendrites[1].Weight = 0.43516349;
+        //    network.HiddenLayers[0].Neurons[2].Bias = 1.1530358;
+        //    network.HiddenLayers[0].Neurons[2].UpstreamDendrites[0].Weight = -0.45802699;
+        //    network.HiddenLayers[0].Neurons[2].UpstreamDendrites[1].Weight = 0.43516349;
 
-            network.HiddenLayers[0].Neurons[3].Bias = -0.25243604;
-            network.HiddenLayers[0].Neurons[3].UpstreamDendrites[0].Weight = -0.58359505;
-            network.HiddenLayers[0].Neurons[3].UpstreamDendrites[1].Weight = 0.81684707;
+        //    network.HiddenLayers[0].Neurons[3].Bias = -0.25243604;
+        //    network.HiddenLayers[0].Neurons[3].UpstreamDendrites[0].Weight = -0.58359505;
+        //    network.HiddenLayers[0].Neurons[3].UpstreamDendrites[1].Weight = 0.81684707;
 
-            network.HiddenLayers[0].Neurons[4].Bias = 0.98132079;
-            network.HiddenLayers[0].Neurons[4].UpstreamDendrites[0].Weight = 0.67272081;
-            network.HiddenLayers[0].Neurons[4].UpstreamDendrites[1].Weight = -0.10441114;
+        //    network.HiddenLayers[0].Neurons[4].Bias = 0.98132079;
+        //    network.HiddenLayers[0].Neurons[4].UpstreamDendrites[0].Weight = 0.67272081;
+        //    network.HiddenLayers[0].Neurons[4].UpstreamDendrites[1].Weight = -0.10441114;
 
-            network.OutputLayer.Neurons[0].Bias = 0.51421884;
-            network.OutputLayer.Neurons[0].UpstreamDendrites[0].Weight = -0.53128038;
-            network.OutputLayer.Neurons[0].UpstreamDendrites[1].Weight = 1.02973269;
-            network.OutputLayer.Neurons[0].UpstreamDendrites[2].Weight = -0.43813562;
-            network.OutputLayer.Neurons[0].UpstreamDendrites[3].Weight = -1.11831825;
-            network.OutputLayer.Neurons[0].UpstreamDendrites[4].Weight = 1.61898166;
-        }
+        //    network.OutputLayer.Neurons[0].Bias = 0.51421884;
+        //    network.OutputLayer.Neurons[0].UpstreamDendrites[0].Weight = -0.53128038;
+        //    network.OutputLayer.Neurons[0].UpstreamDendrites[1].Weight = 1.02973269;
+        //    network.OutputLayer.Neurons[0].UpstreamDendrites[2].Weight = -0.43813562;
+        //    network.OutputLayer.Neurons[0].UpstreamDendrites[3].Weight = -1.11831825;
+        //    network.OutputLayer.Neurons[0].UpstreamDendrites[4].Weight = 1.61898166;
+        //}
 
         static void Main(string[] args)
         {
@@ -88,17 +88,15 @@ namespace SimpleMLP
 
                 Network network = Network.BuildNetwork(
                     rand,
-                    new Math.CostFunctions.MeanSquaredErrorCostFunction(),
+                    new Math.CostFunctions.CrossEntropyCostFunction(),
                     null, //new Math.RegularizationFunctions.L2Normalization(.1),
                     new DropoutLayerOptions(0),
                     2, 1, 5);
 
-                //FuckWithWeights(network);
-
                 NetworkTrainer networkTrainer = new NetworkTrainer();
                 networkTrainer.Train(network,
                     trainingDataBuilder,
-                    .5, 125, 1,
+                    .5, 250, 1,
                     -1,
                     OnLearningProgress,
                     OnValidationDataUpdate);
