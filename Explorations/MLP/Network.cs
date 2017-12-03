@@ -1,4 +1,5 @@
-﻿using Common.Exceptions;
+﻿using Common;
+using Common.Exceptions;
 using Common.Interfaces;
 using Math.WeightInitialization;
 using System;
@@ -39,23 +40,33 @@ namespace MLP
 
         public static Network BuildNetwork(Random random,
             ICostFunction costFunction, IRegularizationFunction regularizationFunction,
+            WeightIntializerType weightIntializerType,
             DropoutLayerOptions dropoutLayerOptions,
             int inputNeuronCount, int outputNeuronCount, params int[] hiddenLayerCounts)
         {
             Network network = new Network(costFunction, regularizationFunction,
                 dropoutLayerOptions, random);
 
-            IWeightBuilder weightBuilder = new RandomGaussian(0, 1, network.NetworkRandom);
-
-            network.InputLayer = InputLayer.BuildInputLayer(weightBuilder, inputNeuronCount, random);
+            network.InputLayer = InputLayer.BuildInputLayer(null, inputNeuronCount, random);
 
             Layer previousLayer = network.InputLayer;
             int dropoutLayerIndex = 1;
             bool isDropoutLayer = false;
+            IWeightBuilder weightBuilder = null; 
             for (int c = 0; c < hiddenLayerCounts.Length; c++)
             {
                 isDropoutLayer = dropoutLayerOptions.DropoutLayerIndices.Contains(dropoutLayerIndex);
                 int currentLayerCount = hiddenLayerCounts[c];
+
+                switch(weightIntializerType)
+                {
+                    case WeightIntializerType.RandomGaussianWithNeuronCount:
+                        weightBuilder = new RandomGaussianWithNeuronCount(previousLayer.Neurons.Count, 0, random);
+                        break;
+                    case WeightIntializerType.RandomNormal:
+                        weightBuilder = new RandomGaussian(0, 1, random); 
+                        break; 
+                }
 
                 HiddenLayer hiddenLayer = HiddenLayer.BuildHiddenLayer(weightBuilder, previousLayer,
                     currentLayerCount, isDropoutLayer ? dropoutLayerOptions.ProbabilityOfDropout : 0, random);
@@ -67,6 +78,17 @@ namespace MLP
             }
 
             isDropoutLayer = dropoutLayerOptions.DropoutLayerIndices.Contains(dropoutLayerIndex);
+
+            switch (weightIntializerType)
+            {
+                case WeightIntializerType.RandomGaussianWithNeuronCount:
+                    weightBuilder = new RandomGaussianWithNeuronCount(previousLayer.Neurons.Count, 0, random);
+                    break;
+                case WeightIntializerType.RandomNormal:
+                    weightBuilder = new RandomGaussian(0, 1, random);
+                    break;
+            }
+
             network.OutputLayer = OutputLayer.BuildOutputLayer(weightBuilder, (HiddenLayer)previousLayer,
                 outputNeuronCount, isDropoutLayer ? dropoutLayerOptions.ProbabilityOfDropout : 0, random);
 

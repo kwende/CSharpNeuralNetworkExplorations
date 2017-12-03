@@ -90,6 +90,7 @@ namespace SimpleMLP
                     rand,
                     new Math.CostFunctions.CrossEntropyCostFunction(),
                     new Math.RegularizationFunctions.L2Normalization(.1),
+                     Common.WeightIntializerType.RandomGaussianWithNeuronCount,
                     new DropoutLayerOptions(0),
                     784, 10, 30);
 
