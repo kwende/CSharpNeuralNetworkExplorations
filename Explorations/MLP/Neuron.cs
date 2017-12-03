@@ -1,4 +1,5 @@
-﻿using SimpleMLP.MLP.Exceptionx;
+﻿using Common.Interfaces;
+using SimpleMLP.MLP.Exceptionx;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -85,11 +86,11 @@ namespace MLP
             return Activation;
         }
 
-        public static Neuron BuildNeuron(Math.RandomNormal rand, Layer previousLayer)
+        public static Neuron BuildNeuron(IWeightBuilder weightBuilder, Layer previousLayer)
         {
             Neuron toReturn = new Neuron();
 
-            toReturn.Bias = rand.Next();
+            toReturn.Bias = 0;
 
             if (previousLayer != null)
             {
@@ -97,7 +98,7 @@ namespace MLP
                 {
                     Neuron previousNeuron = previousLayer.Neurons[c];
 
-                    Dendrite dendrite = Dendrite.BuildWeight(previousNeuron, toReturn, rand.Next());
+                    Dendrite dendrite = Dendrite.BuildDendrite(previousNeuron, toReturn, weightBuilder);
 
                     toReturn.UpstreamDendrites.Add(dendrite);
                     previousNeuron.DownstreamDendrites.Add(dendrite);

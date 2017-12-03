@@ -49,6 +49,7 @@
     <Compile Include="RegularizationFunctions\L1Normalization.cs" />
     <Compile Include="RegularizationFunctions\L2Normalization.cs" />
     <Compile Include="Sigmoid.cs" />
+    <Compile Include="WeightInitialization\RandomGaussian.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj">

@@ -1,4 +1,6 @@
-﻿using Common.Interfaces;
+﻿using Common.Exceptions;
+using Common.Interfaces;
+using Math.WeightInitialization;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -43,9 +45,9 @@ namespace MLP
             Network network = new Network(costFunction, regularizationFunction,
                 dropoutLayerOptions, random);
 
-            Math.RandomNormal rand = new Math.RandomNormal(0, 1, network.NetworkRandom);
+            IWeightBuilder weightBuilder = new RandomGaussian(0, 1, network.NetworkRandom);
 
-            network.InputLayer = InputLayer.BuildInputLayer(rand, inputNeuronCount);
+            network.InputLayer = InputLayer.BuildInputLayer(weightBuilder, inputNeuronCount, random);
 
             Layer previousLayer = network.InputLayer;
             int dropoutLayerIndex = 1;
@@ -55,8 +57,8 @@ namespace MLP
                 isDropoutLayer = dropoutLayerOptions.DropoutLayerIndices.Contains(dropoutLayerIndex);
                 int currentLayerCount = hiddenLayerCounts[c];
 
-                HiddenLayer hiddenLayer = HiddenLayer.BuildHiddenLayer(rand, previousLayer,
-                    currentLayerCount, isDropoutLayer ? dropoutLayerOptions.ProbabilityOfDropout : 0);
+                HiddenLayer hiddenLayer = HiddenLayer.BuildHiddenLayer(weightBuilder, previousLayer,
+                    currentLayerCount, isDropoutLayer ? dropoutLayerOptions.ProbabilityOfDropout : 0, random);
 
                 network.HiddenLayers.Add(hiddenLayer);
                 previousLayer = hiddenLayer;
@@ -65,8 +67,8 @@ namespace MLP
             }
 
             isDropoutLayer = dropoutLayerOptions.DropoutLayerIndices.Contains(dropoutLayerIndex);
-            network.OutputLayer = OutputLayer.BuildOutputLayer(rand, (HiddenLayer)previousLayer,
-                outputNeuronCount, isDropoutLayer ? dropoutLayerOptions.ProbabilityOfDropout : 0);
+            network.OutputLayer = OutputLayer.BuildOutputLayer(weightBuilder, (HiddenLayer)previousLayer,
+                outputNeuronCount, isDropoutLayer ? dropoutLayerOptions.ProbabilityOfDropout : 0, random);
 
             return network;
         }
@@ -153,7 +155,7 @@ namespace MLP
                     dendrite.AddError(errorRelativeToWeight);
                 }
             }
-            
+
             // Compute error for each neuron in each layer moving backwards (backprop). 
             for (int d = HiddenLayers.Count - 1; d >= 0; d--)
             {
@@ -229,6 +231,12 @@ namespace MLP
 
         public double[] Feedforward(double[] x)
         {
+            if (x.Length != InputLayer.Neurons.Count)
+            {
+                throw new DataAndInputLayerSizeMismatchException(
+                    "Resize the input layer to match the size of the training data.");
+            }
+
             for (int d = 0; d < x.Length; d++)
             {
                 (InputLayer.Neurons[d]).Activation = x[d];

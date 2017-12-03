@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Common.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,12 +14,12 @@ namespace MLP
             base(numberOfNeurons, 0, rand)
         {
         }
-        public static InputLayer BuildInputLayer(Math.RandomNormal rand, int numberOfNeurons)
+        public static InputLayer BuildInputLayer(IWeightBuilder weightBuilder, int numberOfNeurons, Random random)
         {
-            InputLayer toReturn = new InputLayer(numberOfNeurons, rand.InternalRandom);
+            InputLayer toReturn = new InputLayer(numberOfNeurons, random);
             for (int c = 0; c < numberOfNeurons; c++)
             {
-                toReturn.Neurons.Add(Neuron.BuildNeuron(rand, null));
+                toReturn.Neurons.Add(Neuron.BuildNeuron(weightBuilder, null));
             }
             return toReturn;
         }

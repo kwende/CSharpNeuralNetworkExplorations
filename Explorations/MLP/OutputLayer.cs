@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Common.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,13 +14,13 @@ namespace MLP
             base(numberOfNeurons, probabilityOfDropout, rand)
         {
         }
-        public static OutputLayer BuildOutputLayer(Math.RandomNormal rand,
-            HiddenLayer previousLayer, int numberOfNeurons, double probabilityOfDropout)
+        public static OutputLayer BuildOutputLayer(IWeightBuilder weightBuilder,
+            HiddenLayer previousLayer, int numberOfNeurons, double probabilityOfDropout, Random random)
         {
-            OutputLayer toReturn = new OutputLayer(numberOfNeurons, probabilityOfDropout, rand.InternalRandom);
+            OutputLayer toReturn = new OutputLayer(numberOfNeurons, probabilityOfDropout, random);
             for (int c = 0; c < numberOfNeurons; c++)
             {
-                toReturn.Neurons.Add(Neuron.BuildNeuron(rand, previousLayer));
+                toReturn.Neurons.Add(Neuron.BuildNeuron(weightBuilder, previousLayer));
             }
             return toReturn;
         }

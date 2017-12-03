@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Common.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -27,13 +28,13 @@ namespace MLP
         {
             SumOfErrorsWrtWeights = 0;
         }
-        public static Dendrite BuildWeight(Neuron upstreamNeuron, Neuron downStreamNeuron, double weight)
+        public static Dendrite BuildDendrite(Neuron upstreamNeuron, Neuron downStreamNeuron, IWeightBuilder weightBuilder)
         {
             Dendrite toReturn = new Dendrite();
 
             toReturn.DownStreamNeuron = downStreamNeuron;
             toReturn.UpStreamNeuron = upstreamNeuron;
-            toReturn.Weight = weight;
+            toReturn.Weight = weightBuilder.BuildWeight();
 
             return toReturn;
         }
